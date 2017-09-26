@@ -22,24 +22,28 @@ public class PlatformController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseBody
     public String processCreate(@RequestBody Map<String, String> map){
+        System.out.println("进入创建平台信息接口");
         return platformService.processCreate(map);
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
     public String processUpdate(@RequestBody Map<String, String> map){
+        System.out.println("进入修改平台信息接口");
         return platformService.processUpdate(map);
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
     public String processDelete(@RequestBody Map<String, String> map){
-        return platformService.processUpdate(map);
+        System.out.println("进入删除平台信息接口");
+        return platformService.processDelete(map);
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ResponseBody
     public String processList(){
+        System.out.println("进入获取平台信息列表接口");
         return platformService.processList();
     }
 }

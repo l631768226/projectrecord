@@ -101,19 +101,20 @@
     </if>
   </delete>
   <insert id="insert" parameterType="hsoft.mobile.projectrecord.model.Platform">
-    insert into platform (platformId, platformName, createId, 
-      createTime, updateId, updateTime
-      )
-    values (#{platformid,jdbcType=INTEGER}, #{platformname,jdbcType=VARCHAR}, #{createid,jdbcType=INTEGER}, 
-      #{createtime,jdbcType=TIMESTAMP}, #{updateid,jdbcType=INTEGER}, #{updatetime,jdbcType=TIMESTAMP}
-      )
+    <selectKey keyProperty="platformid" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into platform (platformName, createId, createTime, 
+      updateId, updateTime)
+    values (#{platformname,jdbcType=VARCHAR}, #{createid,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP}, 
+      #{updateid,jdbcType=INTEGER}, #{updatetime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="hsoft.mobile.projectrecord.model.Platform">
+    <selectKey keyProperty="platformid" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into platform
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="platformid != null">
-        platformId,
-      </if>
       <if test="platformname != null">
         platformName,
       </if>
@@ -131,9 +132,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="platformid != null">
-        #{platformid,jdbcType=INTEGER},
-      </if>
       <if test="platformname != null">
         #{platformname,jdbcType=VARCHAR},
       </if>

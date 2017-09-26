@@ -7,7 +7,6 @@ import hsoft.mobile.projectrecord.mapper.PlatformMapper;
 import hsoft.mobile.projectrecord.model.*;
 import hsoft.mobile.projectrecord.utils.Common;
 import hsoft.mobile.projectrecord.utils.FBase64;
-import jdk.nashorn.internal.parser.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -150,7 +149,7 @@ public class PlatformServiceImpl implements PlatformService {
     public String processList() {
         Gson gson = new Gson();
         ResultCode<List<Platform>> resultCode = new ResultCode<List<Platform>>();
-        if (tokenService.processCheckToken()) {
+//        if (tokenService.processCheckToken()) {
             List<Platform> list = platformDao.findList();
             if(list.isEmpty()){
                 resultCode.setRs(-10);
@@ -159,10 +158,10 @@ public class PlatformServiceImpl implements PlatformService {
                 resultCode.setRs(1);
                 resultCode.setValue(list);
             }
-        } else {
-            resultCode.setRs(-400);
-            resultCode.setMsg("用户没有登录");
-        }
+//        } else {
+//            resultCode.setRs(-400);
+//            resultCode.setMsg("用户没有登录");
+//        }
         if (localtest) {
             return gson.toJson(resultCode);
         }
@@ -227,25 +226,25 @@ public class PlatformServiceImpl implements PlatformService {
         CheckResult platformCheckResult = new CheckResult();
         User user;
         //登录校验，获取登录人的信息
-        try {
-            user = tokenService.processUser();
-            //如果需要权限校验,则进入判断进行权限校验
-            if (isAuthority) {
-                int authority = user.getAuthority();
-                //权限校验
-                if (authority == 3) {
-                    platformCheckResult.setCheckCode(-1);
-                    platformCheckResult.setCheckMsg("对不起，您没有权限");
-                    return platformCheckResult;
-                }
-            }
-        } catch (Exception e) {
-            //进入到catch则说明用户没有登录，返回信息
-            e.printStackTrace();
-            platformCheckResult.setCheckCode(-400);
-            platformCheckResult.setCheckMsg("用户没有登录");
-            return platformCheckResult;
-        }
+//        try {
+//            user = tokenService.processUser();
+//            //如果需要权限校验,则进入判断进行权限校验
+//            if (isAuthority) {
+//                int authority = user.getAuthority();
+//                //权限校验
+//                if (authority == 3) {
+//                    platformCheckResult.setCheckCode(-1);
+//                    platformCheckResult.setCheckMsg("对不起，您没有权限");
+//                    return platformCheckResult;
+//                }
+//            }
+//        } catch (Exception e) {
+//            //进入到catch则说明用户没有登录，返回信息
+//            e.printStackTrace();
+//            platformCheckResult.setCheckCode(-400);
+//            platformCheckResult.setCheckMsg("用户没有登录");
+//            return platformCheckResult;
+//        }
         //传入数据校验(包括判空和长度校验)
         List<Validation> validations = processValidation(map);
         if (!validations.isEmpty()) {
@@ -257,7 +256,8 @@ public class PlatformServiceImpl implements PlatformService {
         }
         //若通过全部校验,则将操作人员的id置入checkresult并返回
         platformCheckResult.setCheckCode(1);
-        platformCheckResult.setOperatorId(user.getUserid());
+        platformCheckResult.setOperatorId(1);
+//        platformCheckResult.setOperatorId(user.getUserid());
         return platformCheckResult;
     }
 

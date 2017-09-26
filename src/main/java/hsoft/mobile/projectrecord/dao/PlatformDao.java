@@ -12,14 +12,14 @@ import java.util.List;
 public interface PlatformDao {
 
     @Select("select * from platform where platformName = #{platformName}")
-    List<Platform> findByPlatformName(@Param("platformName") String platfromName);
+    List<Platform> findByPlatformName(@Param("platformName") String platformName);
 
-    @Select("select * from platfrom where platformId = ${platformId}")
+    @Select("select * from platform where platformId = ${platformId}")
     Platform findById(@Param("platformId") int platformId);
 
     @Select("select * from platform")
     List<Platform> findList();
 
-    @Select("select * from platfrom where platformId = ${platformId} or platformName = #{platformName}")
-    List<Platform> findByIdOrName(@Param("platformId") int platformId, @Param("platformName") String platfromName);
+    @Select("select * from platform where platformId = ${platformId} or platformName = #{platformName}")
+    List<Platform> findByIdOrName(@Param("platformId") int platformId, @Param("platformName") String platformName);
 }

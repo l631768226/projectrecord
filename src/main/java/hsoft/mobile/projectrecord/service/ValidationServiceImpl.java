@@ -59,22 +59,22 @@ public class ValidationServiceImpl implements ValidationService{
 	private boolean regex(String field, String value, String type, String min, String max){
 		String st_regex = "";
 		switch(type){
-			case "number.n" :
+			case "number" :
 				st_regex = "^\\d{"+min+","+max+"}$";
 				break;
-			case "letters.n":
+			case "letters":
 				st_regex = "^[A-Za-z]{"+min+","+max+"}";
 				break;
-			case "letters.number.n":
+			case "letters.number":
 				st_regex = "^\\w{"+min+","+max+"}";
 				break;
-			case "chinese.n":
+			case "chinese":
 				st_regex = "^[\\u4e00-\\u9fa5]{"+min+","+max+"}";
 				break;
-			case "char.n":
+			case "char":
 				st_regex = "^[\\u4e00-\\u9fa5\\w]{"+min+","+max+"}";
 				break;
-			case "validation.n":
+			case "validation":
 				st_regex = "^.{"+min+","+max+"}";
 				break;
 		}
