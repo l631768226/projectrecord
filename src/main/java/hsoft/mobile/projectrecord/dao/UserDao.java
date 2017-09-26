@@ -12,9 +12,20 @@ import java.util.List;
  */
 public interface UserDao {
 
+    /**
+     * 根据用户名和密码查询用户信息表
+     * @param username 用户名
+     * @param password 密码
+     * @return 用户信息model
+     */
     @Select("select * from user where username = #{username} and password = #{password} and hide = 0")
-    public User processLogin(@Param("username") String username, @Param("password") String password);
+    User processLogin(@Param("username") String username, @Param("password") String password);
 
+    /**
+     * 根据用户名查询用户信息表
+     * @param username 用户名
+     * @return 用户信息list
+     */
     @Select("select * from user where username = #{username} and hide = 0")
     List<User> findByUsername(@Param("username") String username);
 
