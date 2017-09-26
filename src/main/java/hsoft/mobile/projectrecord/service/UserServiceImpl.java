@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserDao userDao;
@@ -43,11 +43,11 @@ public class UserServiceImpl implements UserService{
     public User processLogin(Map<String, String> map) {
         try {
             String username = map.get("username");
-            if(localtest){
+            if (localtest) {
                 username = new String(FBase64.decode(username));
             }
             String password = Common.toMD5(map.get("password"));
-            if(localtest){
+            if (localtest) {
                 password = new String(FBase64.decode(password));
             }
             return userDao.processLogin(username, password);
@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public String processCreate(Map<String, String> map){
+    public String processCreate(Map<String, String> map) {
         Gson gson = new Gson();
         ResultCode<User> resultCode = new ResultCode<User>();
         CheckResult checkResult = processCheck(map, true);
@@ -66,14 +66,14 @@ public class UserServiceImpl implements UserService{
             //如果通过校验
             try {
                 User user = processModel(map);
-                if(processDB(user, true)){
+                if (processDB(user, true)) {
                     //如果数据库中不存在相同的用户名 则可以插入
                     Date date = new Date();
                     user.setCreateid(checkResult.getOperatorId());
                     user.setCreatetime(date);
                     userMapper.insertSelective(user);
 
-                    if(map.get("skill") != null && !"".equals(map.get("skill").trim())){
+                    if (map.get("skill") != null && !"".equals(map.get("skill").trim())) {
                         //如果传入了技能相关的字段， 准备数据，将技能信息插入到技能表中
                         Skill skill = new Skill();
                         skill.setCreateid(checkResult.getOperatorId());
@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService{
 
                     resultCode.setRs(1);
                     resultCode.setValue(user);
-                }else{
+                } else {
                     //如果存在，则返回结果
                     resultCode.setRs(-1);
                     resultCode.setMsg("该用户名已存在");
@@ -115,7 +115,7 @@ public class UserServiceImpl implements UserService{
             //如果通过校验
             try {
                 User user = processModel(map);
-                if(processDB(user, false)){
+                if (processDB(user, false)) {
                     //如果数据库中不存在相同的用户名 则可以更新
                     Date date = new Date();
 
@@ -130,7 +130,7 @@ public class UserServiceImpl implements UserService{
                     oldUser.setUpdatetime(date);
                     userMapper.updateByPrimaryKeySelective(oldUser);
 
-                    if(map.get("skill") != null && !"".equals(map.get("skill").trim())){
+                    if (map.get("skill") != null && !"".equals(map.get("skill").trim())) {
                         //首先将skill表中的相关数据删除
                         skillDao.deleteById(userId);
                         //再将修改的技能信息插入到skill表中
@@ -144,7 +144,7 @@ public class UserServiceImpl implements UserService{
 
                     resultCode.setRs(1);
                     resultCode.setValue(oldUser);
-                }else{
+                } else {
                     //如果存在，则返回结果
                     resultCode.setRs(-1);
                     resultCode.setMsg("该用户名已存在");
@@ -170,19 +170,19 @@ public class UserServiceImpl implements UserService{
     public String processList() {
         Gson gson = new Gson();
         ResultCode<List<User>> resultCode = new ResultCode<List<User>>();
-        if (tokenService.processCheckToken()) {
-            List<User> list = userDao.findList();
-            if(list.isEmpty()){
-                resultCode.setRs(-10);
-                resultCode.setMsg("无数据");
-            }else{
-                resultCode.setRs(1);
-                resultCode.setValue(list);
-            }
+//        if (tokenService.processCheckToken()) {
+        List<User> list = userDao.findList();
+        if (list.isEmpty()) {
+            resultCode.setRs(-10);
+            resultCode.setMsg("无数据");
         } else {
-            resultCode.setRs(-400);
-            resultCode.setMsg("用户没有登录");
+            resultCode.setRs(1);
+            resultCode.setValue(list);
         }
+//        } else {
+//            resultCode.setRs(-400);
+//            resultCode.setMsg("用户没有登录");
+//        }
         if (localtest) {
             return gson.toJson(resultCode);
         }
@@ -191,7 +191,35 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public String processSkillList(Map<String, String> map) {
-        return null;
+        Gson gson = new Gson();
+        ResultCode<List<User>> resultCode = new ResultCode<List<User>>();
+//        if (tokenService.processCheckToken()) {
+        String platformIdStr = map.get("platformId");
+        int platformId = 0;
+        if(!Common.checkNull(platformIdStr)){
+            platformId = Integer.valueOf(platformIdStr);
+        }
+        if(platformMapper.selectByPrimaryKey(platformId) != null){
+            List<User> list = userDao.findSkillList(platformId);
+            if (list.isEmpty()) {
+                resultCode.setRs(-10);
+                resultCode.setMsg("无数据");
+            } else {
+                resultCode.setRs(1);
+                resultCode.setValue(list);
+            }
+        }else{
+            resultCode.setRs(-1);
+            resultCode.setMsg("该平台信息不存在");
+        }
+//        } else {
+//            resultCode.setRs(-400);
+//            resultCode.setMsg("用户没有登录");
+//        }
+        if (localtest) {
+            return gson.toJson(resultCode);
+        }
+        return FBase64.encode(gson.toJson(resultCode).getBytes());
     }
 
     /**
@@ -211,7 +239,7 @@ public class UserServiceImpl implements UserService{
             password = map.get("password");
             realname = map.get("realname");
             String authorityStr = map.get("authority");
-            if (localtest) {
+            if (!localtest) {
                 username = new String(FBase64.decode(username));
                 password = new String(FBase64.decode(password));
                 realname = new String(FBase64.decode(realname));
@@ -222,7 +250,7 @@ public class UserServiceImpl implements UserService{
             e.printStackTrace();
         }
         validationService.verifyString("用户名", username, "validation",
-                "6", "20", true, validations);
+                "4", "20", true, validations);
         validationService.verifyString("密码", password, "validation",
                 "6", "20", true, validations);
         validationService.verifyString("真实姓名", realname, "chinese",
@@ -246,31 +274,31 @@ public class UserServiceImpl implements UserService{
         String realname = map.get("realname");
         String authority = map.get("authority");
         if (userid != null && !"".equals(userid)) {
-            if(!localtest){
+            if (!localtest) {
                 userid = new String(FBase64.decode(userid));
             }
             user.setUserid(Integer.valueOf(userid));
         }
         if (username != null && !"".equals(username)) {
-            if(!localtest){
+            if (!localtest) {
                 username = new String(FBase64.decode(username));
             }
             user.setUsername(username);
         }
         if (password != null && !"".equals(password)) {
-            if(!localtest){
+            if (!localtest) {
                 password = new String(FBase64.decode(password));
             }
             user.setPassword(password);
         }
         if (realname != null && !"".equals(realname)) {
-            if(!localtest){
+            if (!localtest) {
                 realname = new String(FBase64.decode(realname));
             }
-            user.setRealname(password);
+            user.setRealname(realname);
         }
         if (authority != null && !"".equals(authority)) {
-            if(!localtest){
+            if (!localtest) {
                 authority = new String(FBase64.decode(authority));
             }
             user.setAuthority(Integer.valueOf(authority));
@@ -289,25 +317,25 @@ public class UserServiceImpl implements UserService{
         CheckResult checkResult = new CheckResult();
         User user;
         //登录校验，获取登录人的信息
-        try {
-            user = tokenService.processUser();
-            //如果需要权限校验,则进入判断进行权限校验
-            if (isAuthority) {
-                int authority = user.getAuthority();
-                //权限校验
-                if (authority != 1) {
-                    checkResult.setCheckCode(-1);
-                    checkResult.setCheckMsg("对不起，您没有权限");
-                    return checkResult;
-                }
-            }
-        } catch (Exception e) {
-            //进入到catch则说明用户没有登录，返回信息
-            e.printStackTrace();
-            checkResult.setCheckCode(-400);
-            checkResult.setCheckMsg("用户没有登录");
-            return checkResult;
-        }
+//        try {
+//            user = tokenService.processUser();
+//            //如果需要权限校验,则进入判断进行权限校验
+//            if (isAuthority) {
+//                int authority = user.getAuthority();
+//                //权限校验
+//                if (authority != 1) {
+//                    checkResult.setCheckCode(-1);
+//                    checkResult.setCheckMsg("对不起，您没有权限");
+//                    return checkResult;
+//                }
+//            }
+//        } catch (Exception e) {
+//            //进入到catch则说明用户没有登录，返回信息
+//            e.printStackTrace();
+//            checkResult.setCheckCode(-400);
+//            checkResult.setCheckMsg("用户没有登录");
+//            return checkResult;
+//        }
         //传入数据校验(包括判空和长度校验)
         List<Validation> validations = processValidation(map);
         if (!validations.isEmpty()) {
@@ -319,26 +347,27 @@ public class UserServiceImpl implements UserService{
         }
         //若通过全部校验,则将操作人员的id置入checkresult并返回
         checkResult.setCheckCode(1);
-        checkResult.setOperatorId(user.getUserid());
+        checkResult.setOperatorId(1);
+        //user.getUserid());
         return checkResult;
     }
 
     /**
      * 校验是否可以进行插入或修改操作
      *
-     * @param user 用户信息
+     * @param user     用户信息
      * @param isCreate true创建时校验/false修改时校验
      * @return true可以/false不可以
      */
     private boolean processDB(User user, boolean isCreate) {
         List<User> list = new ArrayList<User>();
         try {
-            if(isCreate) {
+            if (isCreate) {
                 list = userDao.findByUsername(user.getUsername());
                 return list.isEmpty();
             }
             list = userDao.findByIdOrUsername(user.getUserid(), user.getUsername());
-            return  list.size() <= 1;
+            return list.size() <= 1;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -347,26 +376,27 @@ public class UserServiceImpl implements UserService{
 
     /**
      * 将传入的技能信息插入到表中
-     * @param skill 技能信息
+     *
+     * @param skill    技能信息
      * @param skillStr 传入的技能信息字符串 逗号分隔
      */
-    private void processSkill(Skill skill , String skillStr) throws UnsupportedEncodingException {
+    private void processSkill(Skill skill, String skillStr) throws UnsupportedEncodingException {
         //若传入的技能字符串非空
-        if(!Common.checkNull(skillStr)){
-            if(!localtest){
+        if (!Common.checkNull(skillStr)) {
+            if (!localtest) {
                 skillStr = new String(FBase64.decode(skillStr));
             }
             try {
                 //将逗号分隔的字符串转换成List
                 List<String> list = Common.strToList(skillStr);
                 int platformId;
-                for(String str: list){
+                for (String str : list) {
                     platformId = Integer.valueOf(str);
-                    if(platformMapper.selectByPrimaryKey(platformId) != null){
+                    if (platformMapper.selectByPrimaryKey(platformId) != null) {
                         //如果平台信息存在，置入技能信息表
                         skill.setPlatformid(platformId);
                         skillMapper.insertSelective(skill);
-                    }else{
+                    } else {
                         //如果平台信息不存在，继续
                         continue;
                     }

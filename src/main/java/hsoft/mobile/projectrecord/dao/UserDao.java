@@ -35,6 +35,19 @@ public interface UserDao {
     @Select("select * from user where userId = ${userId} and hide = 0")
     User findById(@Param("userId") int userId);
 
+    /**
+     * 获取用户列表
+     * @return 用户信息list
+     */
     @Select("select * from user where hide = 0")
     List<User> findList();
+
+    /**
+     * 关联用户表和技能表，根据技能查询用户列表
+     * @param platformId 平台信息id
+     * @return 用户信息list
+     */
+    @Select("select * from user as A, skill as B where A.userId = B.userId and B.platformId = " +
+            "${platformId} and A.hide = 0 order by A.userId asc")
+    List<User> findSkillList(@Param("platformId") int platformId);
 }

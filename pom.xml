@@ -134,6 +134,7 @@
 
         </plugins>
 
+        <!-- 解决mapper找不到的问题 -->
         <resources>
             <resource>
                 <directory>src/main/resources/</directory>
