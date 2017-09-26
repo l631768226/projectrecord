@@ -186,6 +186,11 @@ public class UserServiceImpl implements UserService{
         return FBase64.encode(gson.toJson(resultCode).getBytes());
     }
 
+    @Override
+    public String processSkillList(Map<String, String> map) {
+        return null;
+    }
+
     /**
      * 校验用户信息
      *

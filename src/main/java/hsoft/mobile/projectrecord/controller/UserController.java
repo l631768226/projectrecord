@@ -49,4 +49,10 @@ public class UserController {
         return userService.processList();
     }
 
+    @RequestMapping(value = "/skill/list", method = RequestMethod.POST)
+    @ResponseBody
+    public String processSkillList(@RequestBody Map<String, String> map) {
+        return userService.processSkillList(map);
+    }
+
 }

@@ -33,4 +33,11 @@ public interface UserService {
      * @return 结果json
      */
     String processList();
+
+    /**
+     * 根据技能获取用户列表
+     * @param map 传入的技能信息
+     * @return 结果json
+     */
+    String processSkillList(Map<String, String> map);
 }
