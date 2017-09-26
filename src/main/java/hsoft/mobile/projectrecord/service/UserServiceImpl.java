@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.sun.istack.internal.Nullable;
 import hsoft.mobile.projectrecord.dao.SkillDao;
 import hsoft.mobile.projectrecord.dao.UserDao;
+import hsoft.mobile.projectrecord.mapper.PlatformMapper;
 import hsoft.mobile.projectrecord.mapper.SkillMapper;
 import hsoft.mobile.projectrecord.mapper.UserMapper;
 import hsoft.mobile.projectrecord.model.*;
@@ -29,6 +30,8 @@ public class UserServiceImpl implements UserService{
     private TokenService tokenService;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private PlatformMapper platformMapper;
     @Autowired
     private SkillMapper skillMapper;
     @Autowired
@@ -353,10 +356,23 @@ public class UserServiceImpl implements UserService{
             if(!localtest){
                 skillStr = new String(FBase64.decode(skillStr));
             }
-            List<String> list = Common.strToList(skillStr);
-            for(String str: list){
-                skill.setPlatformid(Integer.valueOf(str));
-                skillMapper.insertSelective(skill);
+            try {
+                //将逗号分隔的字符串转换成List
+                List<String> list = Common.strToList(skillStr);
+                int platformId;
+                for(String str: list){
+                    platformId = Integer.valueOf(str);
+                    if(platformMapper.selectByPrimaryKey(platformId) != null){
+                        //如果平台信息存在，置入技能信息表
+                        skill.setPlatformid(platformId);
+                        skillMapper.insertSelective(skill);
+                    }else{
+                        //如果平台信息不存在，继续
+                        continue;
+                    }
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
             }
         }
     }
