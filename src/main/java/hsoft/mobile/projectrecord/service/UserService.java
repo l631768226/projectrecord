@@ -2,7 +2,6 @@ package hsoft.mobile.projectrecord.service;
 
 import hsoft.mobile.projectrecord.model.User;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 public interface UserService {
