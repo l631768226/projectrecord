@@ -18,7 +18,13 @@ public interface UserDao {
     @Select("select * from user where username = #{username} and hide = 0")
     List<User> findByUsername(@Param("username") String username);
 
-    @Select("select * from user where username = #{username} and hide = 0")
+    /**
+     * 根据用户id或用户名查询用户信息
+     * @param userId 用户id
+     * @param username 用户名
+     * @return 用户信息list
+     */
+    @Select("select * from user where (userId = ${userId} or username = #{username} ) and hide = 0")
     List<User> findByIdOrUsername(@Param("userId") int userId, @Param("username") String username);
 
     /**
