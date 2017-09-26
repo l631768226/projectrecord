@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hsoft.mobile.projectrecord.mapper.DocumentMapper">
+  <resultMap id="BaseResultMap" type="hsoft.mobile.projectrecord.model.Document">
+    <id column="docId" jdbcType="INTEGER" property="docid" />
+    <result column="projIndex" jdbcType="VARCHAR" property="projindex" />
+    <result column="reqId" jdbcType="INTEGER" property="reqid" />
+    <result column="issueId" jdbcType="INTEGER" property="issueid" />
+    <result column="docName" jdbcType="VARCHAR" property="docname" />
+    <result column="docDescription" jdbcType="VARCHAR" property="docdescription" />
+    <result column="docCategoryId" jdbcType="INTEGER" property="doccategoryid" />
+    <result column="docPath" jdbcType="VARCHAR" property="docpath" />
+    <result column="docNote" jdbcType="VARCHAR" property="docnote" />
+    <result column="docMd5" jdbcType="VARCHAR" property="docmd5" />
+    <result column="createId" jdbcType="INTEGER" property="createid" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="updateId" jdbcType="INTEGER" property="updateid" />
+    <result column="updateTime" jdbcType="TIMESTAMP" property="updatetime" />
+    <result column="hide" jdbcType="INTEGER" property="hide" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    docId, projIndex, reqId, issueId, docName, docDescription, docCategoryId, docPath, 
+    docNote, docMd5, createId, createTime, updateId, updateTime, hide
+  </sql>
+  <select id="selectByExample" parameterType="hsoft.mobile.projectrecord.model.DocumentExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from document
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from document
+    where docId = #{docid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from document
+    where docId = #{docid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="hsoft.mobile.projectrecord.model.DocumentExample">
+    delete from document
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="hsoft.mobile.projectrecord.model.Document">
+    insert into document (docId, projIndex, reqId, 
+      issueId, docName, docDescription, 
+      docCategoryId, docPath, docNote, 
+      docMd5, createId, createTime, 
+      updateId, updateTime, hide
+      )
+    values (#{docid,jdbcType=INTEGER}, #{projindex,jdbcType=VARCHAR}, #{reqid,jdbcType=INTEGER}, 
+      #{issueid,jdbcType=INTEGER}, #{docname,jdbcType=VARCHAR}, #{docdescription,jdbcType=VARCHAR}, 
+      #{doccategoryid,jdbcType=INTEGER}, #{docpath,jdbcType=VARCHAR}, #{docnote,jdbcType=VARCHAR}, 
+      #{docmd5,jdbcType=VARCHAR}, #{createid,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP}, 
+      #{updateid,jdbcType=INTEGER}, #{updatetime,jdbcType=TIMESTAMP}, #{hide,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="hsoft.mobile.projectrecord.model.Document">
+    insert into document
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="docid != null">
+        docId,
+      </if>
+      <if test="projindex != null">
+        projIndex,
+      </if>
+      <if test="reqid != null">
+        reqId,
+      </if>
+      <if test="issueid != null">
+        issueId,
+      </if>
+      <if test="docname != null">
+        docName,
+      </if>
+      <if test="docdescription != null">
+        docDescription,
+      </if>
+      <if test="doccategoryid != null">
+        docCategoryId,
+      </if>
+      <if test="docpath != null">
+        docPath,
+      </if>
+      <if test="docnote != null">
+        docNote,
+      </if>
+      <if test="docmd5 != null">
+        docMd5,
+      </if>
+      <if test="createid != null">
+        createId,
+      </if>
+      <if test="createtime != null">
+        createTime,
+      </if>
+      <if test="updateid != null">
+        updateId,
+      </if>
+      <if test="updatetime != null">
+        updateTime,
+      </if>
+      <if test="hide != null">
+        hide,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="docid != null">
+        #{docid,jdbcType=INTEGER},
+      </if>
+      <if test="projindex != null">
+        #{projindex,jdbcType=VARCHAR},
+      </if>
+      <if test="reqid != null">
+        #{reqid,jdbcType=INTEGER},
+      </if>
+      <if test="issueid != null">
+        #{issueid,jdbcType=INTEGER},
+      </if>
+      <if test="docname != null">
+        #{docname,jdbcType=VARCHAR},
+      </if>
+      <if test="docdescription != null">
+        #{docdescription,jdbcType=VARCHAR},
+      </if>
+      <if test="doccategoryid != null">
+        #{doccategoryid,jdbcType=INTEGER},
+      </if>
+      <if test="docpath != null">
+        #{docpath,jdbcType=VARCHAR},
+      </if>
+      <if test="docnote != null">
+        #{docnote,jdbcType=VARCHAR},
+      </if>
+      <if test="docmd5 != null">
+        #{docmd5,jdbcType=VARCHAR},
+      </if>
+      <if test="createid != null">
+        #{createid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateid != null">
+        #{updateid,jdbcType=INTEGER},
+      </if>
+      <if test="updatetime != null">
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="hide != null">
+        #{hide,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="hsoft.mobile.projectrecord.model.DocumentExample" resultType="java.lang.Long">
+    select count(*) from document
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update document
+    <set>
+      <if test="record.docid != null">
+        docId = #{record.docid,jdbcType=INTEGER},
+      </if>
+      <if test="record.projindex != null">
+        projIndex = #{record.projindex,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqid != null">
+        reqId = #{record.reqid,jdbcType=INTEGER},
+      </if>
+      <if test="record.issueid != null">
+        issueId = #{record.issueid,jdbcType=INTEGER},
+      </if>
+      <if test="record.docname != null">
+        docName = #{record.docname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.docdescription != null">
+        docDescription = #{record.docdescription,jdbcType=VARCHAR},
+      </if>
+      <if test="record.doccategoryid != null">
+        docCategoryId = #{record.doccategoryid,jdbcType=INTEGER},
+      </if>
+      <if test="record.docpath != null">
+        docPath = #{record.docpath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.docnote != null">
+        docNote = #{record.docnote,jdbcType=VARCHAR},
+      </if>
+      <if test="record.docmd5 != null">
+        docMd5 = #{record.docmd5,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createid != null">
+        createId = #{record.createid,jdbcType=INTEGER},
+      </if>
+      <if test="record.createtime != null">
+        createTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateid != null">
+        updateId = #{record.updateid,jdbcType=INTEGER},
+      </if>
+      <if test="record.updatetime != null">
+        updateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.hide != null">
+        hide = #{record.hide,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update document
+    set docId = #{record.docid,jdbcType=INTEGER},
+      projIndex = #{record.projindex,jdbcType=VARCHAR},
+      reqId = #{record.reqid,jdbcType=INTEGER},
+      issueId = #{record.issueid,jdbcType=INTEGER},
+      docName = #{record.docname,jdbcType=VARCHAR},
+      docDescription = #{record.docdescription,jdbcType=VARCHAR},
+      docCategoryId = #{record.doccategoryid,jdbcType=INTEGER},
+      docPath = #{record.docpath,jdbcType=VARCHAR},
+      docNote = #{record.docnote,jdbcType=VARCHAR},
+      docMd5 = #{record.docmd5,jdbcType=VARCHAR},
+      createId = #{record.createid,jdbcType=INTEGER},
+      createTime = #{record.createtime,jdbcType=TIMESTAMP},
+      updateId = #{record.updateid,jdbcType=INTEGER},
+      updateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      hide = #{record.hide,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="hsoft.mobile.projectrecord.model.Document">
+    update document
+    <set>
+      <if test="projindex != null">
+        projIndex = #{projindex,jdbcType=VARCHAR},
+      </if>
+      <if test="reqid != null">
+        reqId = #{reqid,jdbcType=INTEGER},
+      </if>
+      <if test="issueid != null">
+        issueId = #{issueid,jdbcType=INTEGER},
+      </if>
+      <if test="docname != null">
+        docName = #{docname,jdbcType=VARCHAR},
+      </if>
+      <if test="docdescription != null">
+        docDescription = #{docdescription,jdbcType=VARCHAR},
+      </if>
+      <if test="doccategoryid != null">
+        docCategoryId = #{doccategoryid,jdbcType=INTEGER},
+      </if>
+      <if test="docpath != null">
+        docPath = #{docpath,jdbcType=VARCHAR},
+      </if>
+      <if test="docnote != null">
+        docNote = #{docnote,jdbcType=VARCHAR},
+      </if>
+      <if test="docmd5 != null">
+        docMd5 = #{docmd5,jdbcType=VARCHAR},
+      </if>
+      <if test="createid != null">
+        createId = #{createid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null">
+        createTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateid != null">
+        updateId = #{updateid,jdbcType=INTEGER},
+      </if>
+      <if test="updatetime != null">
+        updateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="hide != null">
+        hide = #{hide,jdbcType=INTEGER},
+      </if>
+    </set>
+    where docId = #{docid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="hsoft.mobile.projectrecord.model.Document">
+    update document
+    set projIndex = #{projindex,jdbcType=VARCHAR},
+      reqId = #{reqid,jdbcType=INTEGER},
+      issueId = #{issueid,jdbcType=INTEGER},
+      docName = #{docname,jdbcType=VARCHAR},
+      docDescription = #{docdescription,jdbcType=VARCHAR},
+      docCategoryId = #{doccategoryid,jdbcType=INTEGER},
+      docPath = #{docpath,jdbcType=VARCHAR},
+      docNote = #{docnote,jdbcType=VARCHAR},
+      docMd5 = #{docmd5,jdbcType=VARCHAR},
+      createId = #{createid,jdbcType=INTEGER},
+      createTime = #{createtime,jdbcType=TIMESTAMP},
+      updateId = #{updateid,jdbcType=INTEGER},
+      updateTime = #{updatetime,jdbcType=TIMESTAMP},
+      hide = #{hide,jdbcType=INTEGER}
+    where docId = #{docid,jdbcType=INTEGER}
+  </update>
+</mapper>

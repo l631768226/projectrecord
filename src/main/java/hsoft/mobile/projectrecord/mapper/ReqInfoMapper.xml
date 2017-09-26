@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hsoft.mobile.projectrecord.mapper.ReqInfoMapper">
+  <resultMap id="BaseResultMap" type="hsoft.mobile.projectrecord.model.ReqInfo">
+    <id column="reqId" jdbcType="INTEGER" property="reqid" />
+    <result column="projIndex" jdbcType="VARCHAR" property="projindex" />
+    <result column="reqName" jdbcType="VARCHAR" property="reqname" />
+    <result column="statusCategoryId" jdbcType="INTEGER" property="statuscategoryid" />
+    <result column="statusNote" jdbcType="VARCHAR" property="statusnote" />
+    <result column="reqNote" jdbcType="VARCHAR" property="reqnote" />
+    <result column="reqProposer" jdbcType="VARCHAR" property="reqproposer" />
+    <result column="reqScore" jdbcType="REAL" property="reqscore" />
+    <result column="reqComment" jdbcType="VARCHAR" property="reqcomment" />
+    <result column="reqKeyword" jdbcType="VARCHAR" property="reqkeyword" />
+    <result column="createId" jdbcType="INTEGER" property="createid" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="updateId" jdbcType="INTEGER" property="updateid" />
+    <result column="updateTime" jdbcType="TIMESTAMP" property="updatetime" />
+    <result column="hide" jdbcType="INTEGER" property="hide" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="hsoft.mobile.projectrecord.model.ReqInfo">
+    <result column="reqDescription" jdbcType="LONGVARCHAR" property="reqdescription" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    reqId, projIndex, reqName, statusCategoryId, statusNote, reqNote, reqProposer, reqScore, 
+    reqComment, reqKeyword, createId, createTime, updateId, updateTime, hide
+  </sql>
+  <sql id="Blob_Column_List">
+    reqDescription
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="hsoft.mobile.projectrecord.model.ReqInfoExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from req_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="hsoft.mobile.projectrecord.model.ReqInfoExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from req_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from req_info
+    where reqId = #{reqid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from req_info
+    where reqId = #{reqid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="hsoft.mobile.projectrecord.model.ReqInfoExample">
+    delete from req_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="hsoft.mobile.projectrecord.model.ReqInfo">
+    insert into req_info (reqId, projIndex, reqName, 
+      statusCategoryId, statusNote, reqNote, 
+      reqProposer, reqScore, reqComment, 
+      reqKeyword, createId, createTime, 
+      updateId, updateTime, hide, 
+      reqDescription)
+    values (#{reqid,jdbcType=INTEGER}, #{projindex,jdbcType=VARCHAR}, #{reqname,jdbcType=VARCHAR}, 
+      #{statuscategoryid,jdbcType=INTEGER}, #{statusnote,jdbcType=VARCHAR}, #{reqnote,jdbcType=VARCHAR}, 
+      #{reqproposer,jdbcType=VARCHAR}, #{reqscore,jdbcType=REAL}, #{reqcomment,jdbcType=VARCHAR}, 
+      #{reqkeyword,jdbcType=VARCHAR}, #{createid,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP}, 
+      #{updateid,jdbcType=INTEGER}, #{updatetime,jdbcType=TIMESTAMP}, #{hide,jdbcType=INTEGER}, 
+      #{reqdescription,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="hsoft.mobile.projectrecord.model.ReqInfo">
+    insert into req_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="reqid != null">
+        reqId,
+      </if>
+      <if test="projindex != null">
+        projIndex,
+      </if>
+      <if test="reqname != null">
+        reqName,
+      </if>
+      <if test="statuscategoryid != null">
+        statusCategoryId,
+      </if>
+      <if test="statusnote != null">
+        statusNote,
+      </if>
+      <if test="reqnote != null">
+        reqNote,
+      </if>
+      <if test="reqproposer != null">
+        reqProposer,
+      </if>
+      <if test="reqscore != null">
+        reqScore,
+      </if>
+      <if test="reqcomment != null">
+        reqComment,
+      </if>
+      <if test="reqkeyword != null">
+        reqKeyword,
+      </if>
+      <if test="createid != null">
+        createId,
+      </if>
+      <if test="createtime != null">
+        createTime,
+      </if>
+      <if test="updateid != null">
+        updateId,
+      </if>
+      <if test="updatetime != null">
+        updateTime,
+      </if>
+      <if test="hide != null">
+        hide,
+      </if>
+      <if test="reqdescription != null">
+        reqDescription,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="reqid != null">
+        #{reqid,jdbcType=INTEGER},
+      </if>
+      <if test="projindex != null">
+        #{projindex,jdbcType=VARCHAR},
+      </if>
+      <if test="reqname != null">
+        #{reqname,jdbcType=VARCHAR},
+      </if>
+      <if test="statuscategoryid != null">
+        #{statuscategoryid,jdbcType=INTEGER},
+      </if>
+      <if test="statusnote != null">
+        #{statusnote,jdbcType=VARCHAR},
+      </if>
+      <if test="reqnote != null">
+        #{reqnote,jdbcType=VARCHAR},
+      </if>
+      <if test="reqproposer != null">
+        #{reqproposer,jdbcType=VARCHAR},
+      </if>
+      <if test="reqscore != null">
+        #{reqscore,jdbcType=REAL},
+      </if>
+      <if test="reqcomment != null">
+        #{reqcomment,jdbcType=VARCHAR},
+      </if>
+      <if test="reqkeyword != null">
+        #{reqkeyword,jdbcType=VARCHAR},
+      </if>
+      <if test="createid != null">
+        #{createid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateid != null">
+        #{updateid,jdbcType=INTEGER},
+      </if>
+      <if test="updatetime != null">
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="hide != null">
+        #{hide,jdbcType=INTEGER},
+      </if>
+      <if test="reqdescription != null">
+        #{reqdescription,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="hsoft.mobile.projectrecord.model.ReqInfoExample" resultType="java.lang.Long">
+    select count(*) from req_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update req_info
+    <set>
+      <if test="record.reqid != null">
+        reqId = #{record.reqid,jdbcType=INTEGER},
+      </if>
+      <if test="record.projindex != null">
+        projIndex = #{record.projindex,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqname != null">
+        reqName = #{record.reqname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.statuscategoryid != null">
+        statusCategoryId = #{record.statuscategoryid,jdbcType=INTEGER},
+      </if>
+      <if test="record.statusnote != null">
+        statusNote = #{record.statusnote,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqnote != null">
+        reqNote = #{record.reqnote,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqproposer != null">
+        reqProposer = #{record.reqproposer,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqscore != null">
+        reqScore = #{record.reqscore,jdbcType=REAL},
+      </if>
+      <if test="record.reqcomment != null">
+        reqComment = #{record.reqcomment,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqkeyword != null">
+        reqKeyword = #{record.reqkeyword,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createid != null">
+        createId = #{record.createid,jdbcType=INTEGER},
+      </if>
+      <if test="record.createtime != null">
+        createTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateid != null">
+        updateId = #{record.updateid,jdbcType=INTEGER},
+      </if>
+      <if test="record.updatetime != null">
+        updateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.hide != null">
+        hide = #{record.hide,jdbcType=INTEGER},
+      </if>
+      <if test="record.reqdescription != null">
+        reqDescription = #{record.reqdescription,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update req_info
+    set reqId = #{record.reqid,jdbcType=INTEGER},
+      projIndex = #{record.projindex,jdbcType=VARCHAR},
+      reqName = #{record.reqname,jdbcType=VARCHAR},
+      statusCategoryId = #{record.statuscategoryid,jdbcType=INTEGER},
+      statusNote = #{record.statusnote,jdbcType=VARCHAR},
+      reqNote = #{record.reqnote,jdbcType=VARCHAR},
+      reqProposer = #{record.reqproposer,jdbcType=VARCHAR},
+      reqScore = #{record.reqscore,jdbcType=REAL},
+      reqComment = #{record.reqcomment,jdbcType=VARCHAR},
+      reqKeyword = #{record.reqkeyword,jdbcType=VARCHAR},
+      createId = #{record.createid,jdbcType=INTEGER},
+      createTime = #{record.createtime,jdbcType=TIMESTAMP},
+      updateId = #{record.updateid,jdbcType=INTEGER},
+      updateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      hide = #{record.hide,jdbcType=INTEGER},
+      reqDescription = #{record.reqdescription,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update req_info
+    set reqId = #{record.reqid,jdbcType=INTEGER},
+      projIndex = #{record.projindex,jdbcType=VARCHAR},
+      reqName = #{record.reqname,jdbcType=VARCHAR},
+      statusCategoryId = #{record.statuscategoryid,jdbcType=INTEGER},
+      statusNote = #{record.statusnote,jdbcType=VARCHAR},
+      reqNote = #{record.reqnote,jdbcType=VARCHAR},
+      reqProposer = #{record.reqproposer,jdbcType=VARCHAR},
+      reqScore = #{record.reqscore,jdbcType=REAL},
+      reqComment = #{record.reqcomment,jdbcType=VARCHAR},
+      reqKeyword = #{record.reqkeyword,jdbcType=VARCHAR},
+      createId = #{record.createid,jdbcType=INTEGER},
+      createTime = #{record.createtime,jdbcType=TIMESTAMP},
+      updateId = #{record.updateid,jdbcType=INTEGER},
+      updateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      hide = #{record.hide,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="hsoft.mobile.projectrecord.model.ReqInfo">
+    update req_info
+    <set>
+      <if test="projindex != null">
+        projIndex = #{projindex,jdbcType=VARCHAR},
+      </if>
+      <if test="reqname != null">
+        reqName = #{reqname,jdbcType=VARCHAR},
+      </if>
+      <if test="statuscategoryid != null">
+        statusCategoryId = #{statuscategoryid,jdbcType=INTEGER},
+      </if>
+      <if test="statusnote != null">
+        statusNote = #{statusnote,jdbcType=VARCHAR},
+      </if>
+      <if test="reqnote != null">
+        reqNote = #{reqnote,jdbcType=VARCHAR},
+      </if>
+      <if test="reqproposer != null">
+        reqProposer = #{reqproposer,jdbcType=VARCHAR},
+      </if>
+      <if test="reqscore != null">
+        reqScore = #{reqscore,jdbcType=REAL},
+      </if>
+      <if test="reqcomment != null">
+        reqComment = #{reqcomment,jdbcType=VARCHAR},
+      </if>
+      <if test="reqkeyword != null">
+        reqKeyword = #{reqkeyword,jdbcType=VARCHAR},
+      </if>
+      <if test="createid != null">
+        createId = #{createid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null">
+        createTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateid != null">
+        updateId = #{updateid,jdbcType=INTEGER},
+      </if>
+      <if test="updatetime != null">
+        updateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="hide != null">
+        hide = #{hide,jdbcType=INTEGER},
+      </if>
+      <if test="reqdescription != null">
+        reqDescription = #{reqdescription,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where reqId = #{reqid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="hsoft.mobile.projectrecord.model.ReqInfo">
+    update req_info
+    set projIndex = #{projindex,jdbcType=VARCHAR},
+      reqName = #{reqname,jdbcType=VARCHAR},
+      statusCategoryId = #{statuscategoryid,jdbcType=INTEGER},
+      statusNote = #{statusnote,jdbcType=VARCHAR},
+      reqNote = #{reqnote,jdbcType=VARCHAR},
+      reqProposer = #{reqproposer,jdbcType=VARCHAR},
+      reqScore = #{reqscore,jdbcType=REAL},
+      reqComment = #{reqcomment,jdbcType=VARCHAR},
+      reqKeyword = #{reqkeyword,jdbcType=VARCHAR},
+      createId = #{createid,jdbcType=INTEGER},
+      createTime = #{createtime,jdbcType=TIMESTAMP},
+      updateId = #{updateid,jdbcType=INTEGER},
+      updateTime = #{updatetime,jdbcType=TIMESTAMP},
+      hide = #{hide,jdbcType=INTEGER},
+      reqDescription = #{reqdescription,jdbcType=LONGVARCHAR}
+    where reqId = #{reqid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="hsoft.mobile.projectrecord.model.ReqInfo">
+    update req_info
+    set projIndex = #{projindex,jdbcType=VARCHAR},
+      reqName = #{reqname,jdbcType=VARCHAR},
+      statusCategoryId = #{statuscategoryid,jdbcType=INTEGER},
+      statusNote = #{statusnote,jdbcType=VARCHAR},
+      reqNote = #{reqnote,jdbcType=VARCHAR},
+      reqProposer = #{reqproposer,jdbcType=VARCHAR},
+      reqScore = #{reqscore,jdbcType=REAL},
+      reqComment = #{reqcomment,jdbcType=VARCHAR},
+      reqKeyword = #{reqkeyword,jdbcType=VARCHAR},
+      createId = #{createid,jdbcType=INTEGER},
+      createTime = #{createtime,jdbcType=TIMESTAMP},
+      updateId = #{updateid,jdbcType=INTEGER},
+      updateTime = #{updatetime,jdbcType=TIMESTAMP},
+      hide = #{hide,jdbcType=INTEGER}
+    where reqId = #{reqid,jdbcType=INTEGER}
+  </update>
+</mapper>

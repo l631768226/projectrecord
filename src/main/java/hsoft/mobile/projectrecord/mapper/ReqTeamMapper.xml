@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hsoft.mobile.projectrecord.mapper.ReqTeamMapper">
+  <resultMap id="BaseResultMap" type="hsoft.mobile.projectrecord.model.ReqTeam">
+    <id column="reqTeamId" jdbcType="INTEGER" property="reqteamid" />
+    <result column="projIndex" jdbcType="VARCHAR" property="projindex" />
+    <result column="reqId" jdbcType="INTEGER" property="reqid" />
+    <result column="schedId" jdbcType="INTEGER" property="schedid" />
+    <result column="member" jdbcType="INTEGER" property="member" />
+    <result column="task" jdbcType="VARCHAR" property="task" />
+    <result column="createId" jdbcType="INTEGER" property="createid" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="updateId" jdbcType="INTEGER" property="updateid" />
+    <result column="updateTime" jdbcType="TIMESTAMP" property="updatetime" />
+    <result column="hide" jdbcType="INTEGER" property="hide" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    reqTeamId, projIndex, reqId, schedId, member, task, createId, createTime, updateId, 
+    updateTime, hide
+  </sql>
+  <select id="selectByExample" parameterType="hsoft.mobile.projectrecord.model.ReqTeamExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from req_team
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from req_team
+    where reqTeamId = #{reqteamid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from req_team
+    where reqTeamId = #{reqteamid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="hsoft.mobile.projectrecord.model.ReqTeamExample">
+    delete from req_team
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="hsoft.mobile.projectrecord.model.ReqTeam">
+    insert into req_team (reqTeamId, projIndex, reqId, 
+      schedId, member, task, 
+      createId, createTime, updateId, 
+      updateTime, hide)
+    values (#{reqteamid,jdbcType=INTEGER}, #{projindex,jdbcType=VARCHAR}, #{reqid,jdbcType=INTEGER}, 
+      #{schedid,jdbcType=INTEGER}, #{member,jdbcType=INTEGER}, #{task,jdbcType=VARCHAR}, 
+      #{createid,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP}, #{updateid,jdbcType=INTEGER}, 
+      #{updatetime,jdbcType=TIMESTAMP}, #{hide,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="hsoft.mobile.projectrecord.model.ReqTeam">
+    insert into req_team
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="reqteamid != null">
+        reqTeamId,
+      </if>
+      <if test="projindex != null">
+        projIndex,
+      </if>
+      <if test="reqid != null">
+        reqId,
+      </if>
+      <if test="schedid != null">
+        schedId,
+      </if>
+      <if test="member != null">
+        member,
+      </if>
+      <if test="task != null">
+        task,
+      </if>
+      <if test="createid != null">
+        createId,
+      </if>
+      <if test="createtime != null">
+        createTime,
+      </if>
+      <if test="updateid != null">
+        updateId,
+      </if>
+      <if test="updatetime != null">
+        updateTime,
+      </if>
+      <if test="hide != null">
+        hide,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="reqteamid != null">
+        #{reqteamid,jdbcType=INTEGER},
+      </if>
+      <if test="projindex != null">
+        #{projindex,jdbcType=VARCHAR},
+      </if>
+      <if test="reqid != null">
+        #{reqid,jdbcType=INTEGER},
+      </if>
+      <if test="schedid != null">
+        #{schedid,jdbcType=INTEGER},
+      </if>
+      <if test="member != null">
+        #{member,jdbcType=INTEGER},
+      </if>
+      <if test="task != null">
+        #{task,jdbcType=VARCHAR},
+      </if>
+      <if test="createid != null">
+        #{createid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateid != null">
+        #{updateid,jdbcType=INTEGER},
+      </if>
+      <if test="updatetime != null">
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="hide != null">
+        #{hide,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="hsoft.mobile.projectrecord.model.ReqTeamExample" resultType="java.lang.Long">
+    select count(*) from req_team
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update req_team
+    <set>
+      <if test="record.reqteamid != null">
+        reqTeamId = #{record.reqteamid,jdbcType=INTEGER},
+      </if>
+      <if test="record.projindex != null">
+        projIndex = #{record.projindex,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqid != null">
+        reqId = #{record.reqid,jdbcType=INTEGER},
+      </if>
+      <if test="record.schedid != null">
+        schedId = #{record.schedid,jdbcType=INTEGER},
+      </if>
+      <if test="record.member != null">
+        member = #{record.member,jdbcType=INTEGER},
+      </if>
+      <if test="record.task != null">
+        task = #{record.task,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createid != null">
+        createId = #{record.createid,jdbcType=INTEGER},
+      </if>
+      <if test="record.createtime != null">
+        createTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateid != null">
+        updateId = #{record.updateid,jdbcType=INTEGER},
+      </if>
+      <if test="record.updatetime != null">
+        updateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.hide != null">
+        hide = #{record.hide,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update req_team
+    set reqTeamId = #{record.reqteamid,jdbcType=INTEGER},
+      projIndex = #{record.projindex,jdbcType=VARCHAR},
+      reqId = #{record.reqid,jdbcType=INTEGER},
+      schedId = #{record.schedid,jdbcType=INTEGER},
+      member = #{record.member,jdbcType=INTEGER},
+      task = #{record.task,jdbcType=VARCHAR},
+      createId = #{record.createid,jdbcType=INTEGER},
+      createTime = #{record.createtime,jdbcType=TIMESTAMP},
+      updateId = #{record.updateid,jdbcType=INTEGER},
+      updateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      hide = #{record.hide,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="hsoft.mobile.projectrecord.model.ReqTeam">
+    update req_team
+    <set>
+      <if test="projindex != null">
+        projIndex = #{projindex,jdbcType=VARCHAR},
+      </if>
+      <if test="reqid != null">
+        reqId = #{reqid,jdbcType=INTEGER},
+      </if>
+      <if test="schedid != null">
+        schedId = #{schedid,jdbcType=INTEGER},
+      </if>
+      <if test="member != null">
+        member = #{member,jdbcType=INTEGER},
+      </if>
+      <if test="task != null">
+        task = #{task,jdbcType=VARCHAR},
+      </if>
+      <if test="createid != null">
+        createId = #{createid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null">
+        createTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateid != null">
+        updateId = #{updateid,jdbcType=INTEGER},
+      </if>
+      <if test="updatetime != null">
+        updateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="hide != null">
+        hide = #{hide,jdbcType=INTEGER},
+      </if>
+    </set>
+    where reqTeamId = #{reqteamid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="hsoft.mobile.projectrecord.model.ReqTeam">
+    update req_team
+    set projIndex = #{projindex,jdbcType=VARCHAR},
+      reqId = #{reqid,jdbcType=INTEGER},
+      schedId = #{schedid,jdbcType=INTEGER},
+      member = #{member,jdbcType=INTEGER},
+      task = #{task,jdbcType=VARCHAR},
+      createId = #{createid,jdbcType=INTEGER},
+      createTime = #{createtime,jdbcType=TIMESTAMP},
+      updateId = #{updateid,jdbcType=INTEGER},
+      updateTime = #{updatetime,jdbcType=TIMESTAMP},
+      hide = #{hide,jdbcType=INTEGER}
+    where reqTeamId = #{reqteamid,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hsoft.mobile.projectrecord.mapper.SkillMapper">
+  <resultMap id="BaseResultMap" type="hsoft.mobile.projectrecord.model.Skill">
+    <id column="skillId" jdbcType="INTEGER" property="skillid" />
+    <result column="userId" jdbcType="INTEGER" property="userid" />
+    <result column="platformId" jdbcType="INTEGER" property="platformid" />
+    <result column="createId" jdbcType="INTEGER" property="createid" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createtime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    skillId, userId, platformId, createId, createTime
+  </sql>
+  <select id="selectByExample" parameterType="hsoft.mobile.projectrecord.model.SkillExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from skill
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from skill
+    where skillId = #{skillid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from skill
+    where skillId = #{skillid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="hsoft.mobile.projectrecord.model.SkillExample">
+    delete from skill
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="hsoft.mobile.projectrecord.model.Skill">
+    insert into skill (skillId, userId, platformId, 
+      createId, createTime)
+    values (#{skillid,jdbcType=INTEGER}, #{userid,jdbcType=INTEGER}, #{platformid,jdbcType=INTEGER}, 
+      #{createid,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="hsoft.mobile.projectrecord.model.Skill">
+    insert into skill
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="skillid != null">
+        skillId,
+      </if>
+      <if test="userid != null">
+        userId,
+      </if>
+      <if test="platformid != null">
+        platformId,
+      </if>
+      <if test="createid != null">
+        createId,
+      </if>
+      <if test="createtime != null">
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="skillid != null">
+        #{skillid,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null">
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="platformid != null">
+        #{platformid,jdbcType=INTEGER},
+      </if>
+      <if test="createid != null">
+        #{createid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="hsoft.mobile.projectrecord.model.SkillExample" resultType="java.lang.Long">
+    select count(*) from skill
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update skill
+    <set>
+      <if test="record.skillid != null">
+        skillId = #{record.skillid,jdbcType=INTEGER},
+      </if>
+      <if test="record.userid != null">
+        userId = #{record.userid,jdbcType=INTEGER},
+      </if>
+      <if test="record.platformid != null">
+        platformId = #{record.platformid,jdbcType=INTEGER},
+      </if>
+      <if test="record.createid != null">
+        createId = #{record.createid,jdbcType=INTEGER},
+      </if>
+      <if test="record.createtime != null">
+        createTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update skill
+    set skillId = #{record.skillid,jdbcType=INTEGER},
+      userId = #{record.userid,jdbcType=INTEGER},
+      platformId = #{record.platformid,jdbcType=INTEGER},
+      createId = #{record.createid,jdbcType=INTEGER},
+      createTime = #{record.createtime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="hsoft.mobile.projectrecord.model.Skill">
+    update skill
+    <set>
+      <if test="userid != null">
+        userId = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="platformid != null">
+        platformId = #{platformid,jdbcType=INTEGER},
+      </if>
+      <if test="createid != null">
+        createId = #{createid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null">
+        createTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where skillId = #{skillid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="hsoft.mobile.projectrecord.model.Skill">
+    update skill
+    set userId = #{userid,jdbcType=INTEGER},
+      platformId = #{platformid,jdbcType=INTEGER},
+      createId = #{createid,jdbcType=INTEGER},
+      createTime = #{createtime,jdbcType=TIMESTAMP}
+    where skillId = #{skillid,jdbcType=INTEGER}
+  </update>
+</mapper>
