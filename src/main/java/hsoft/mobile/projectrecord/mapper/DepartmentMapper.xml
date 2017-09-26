@@ -101,19 +101,20 @@
     </if>
   </delete>
   <insert id="insert" parameterType="hsoft.mobile.projectrecord.model.Department">
-    insert into department (deptId, deptName, createId, 
-      createTime, updateId, updateTime
-      )
-    values (#{deptid,jdbcType=INTEGER}, #{deptname,jdbcType=VARCHAR}, #{createid,jdbcType=INTEGER}, 
-      #{createtime,jdbcType=TIMESTAMP}, #{updateid,jdbcType=INTEGER}, #{updatetime,jdbcType=TIMESTAMP}
-      )
+    <selectKey keyProperty="deptid" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into department (deptName, createId, createTime, 
+      updateId, updateTime)
+    values (#{deptname,jdbcType=VARCHAR}, #{createid,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP}, 
+      #{updateid,jdbcType=INTEGER}, #{updatetime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="hsoft.mobile.projectrecord.model.Department">
+    <selectKey keyProperty="deptid" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into department
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="deptid != null">
-        deptId,
-      </if>
       <if test="deptname != null">
         deptName,
       </if>
@@ -131,9 +132,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="deptid != null">
-        #{deptid,jdbcType=INTEGER},
-      </if>
       <if test="deptname != null">
         #{deptname,jdbcType=VARCHAR},
       </if>
