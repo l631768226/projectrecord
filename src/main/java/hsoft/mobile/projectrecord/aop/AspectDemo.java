@@ -29,6 +29,9 @@ import java.util.Arrays;
  */
 public class AspectDemo {
 
+    /**
+     * test测试github使用
+     */
     private Logger log = Logger.getLogger(getClass());
 
     private Gson gson = new Gson();
