@@ -30,7 +30,7 @@ import java.util.Arrays;
 public class AspectDemo {
 
     /**
-     * test测试github使用
+     * test测试github
      */
     private Logger log = Logger.getLogger(getClass());
 
