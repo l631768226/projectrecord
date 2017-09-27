@@ -1,5 +1,6 @@
 package hsoft.mobile.projectrecord.service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 /**

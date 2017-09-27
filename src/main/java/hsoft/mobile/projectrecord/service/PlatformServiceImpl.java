@@ -33,39 +33,57 @@ public class PlatformServiceImpl implements PlatformService {
     @Autowired
     private PlatformDao platformDao;
 
+    //本地测试时为true
     private boolean localtest = Common.localtest;
+    //Gson工具
+    private Gson gson = new Gson();
 
     @Override
     public String processCreate(Map<String, String> map) {
-        Gson gson = new Gson();
         ResultCode<Platform> resultCode = new ResultCode<Platform>();
-        CheckResult checkResult = processCheck(map, true);
-        if (checkResult.getCheckCode() > 0) {
-            //如果通过校验
-            try {
-                Platform platform = processModel(map);
-                //校验数据库中是否有可以进行插入操作
-                if (processDB(platform, true)) {
-                    //如果数据库中不存在同名的平台信息，则可以新增信息
-                    //将需要处理的信息置入model中 并插入到数据库
-                    platform.setCreateid(checkResult.getOperatorId());
-                    platform.setCreatetime(new Date());
-                    platformMapper.insertSelective(platform);
-                    resultCode.setRs(1);
-                    resultCode.setValue(platform);
-                } else {
-                    //如果存在，则返回结果
-                    resultCode.setRs(-1);
-                    resultCode.setMsg("该平台名称已存在");
-                }
-            } catch (Exception e) {
-                //插入数据库失败，返回结果
-                e.printStackTrace();
-                resultCode.setRs(-1);
-                resultCode.setMsg("数据库插入操作错误");
+        CheckResult checkResult = new CheckResult();
+        do {
+            //第一步 校验用户是否登录以及权限
+            checkUser(checkResult, true);
+            //如果未通过登录和权限校验，返回结果
+            if (checkResult.getCheckCode() < 0) {
+                break;
             }
-        } else {
-            //如果没有通过校验,则组织返回结果数据
+
+            //第二步 组织数据
+            Platform platform = new Platform();
+            try {
+                platform = processModel(map);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
+            //第三步 数据校验
+            processValidation(platform, checkResult);
+            if(checkResult.getCheckCode() < 0){
+                break;
+            }
+
+            //第四步 插入之前校验数据库
+            processDB(platform, checkResult, true);
+            if(checkResult.getCheckCode() < 0){
+                break;
+            }
+
+            //第五步数据库插入操作
+            try {
+                platform.setCreateid(checkResult.getOperatorId());
+                platform.setCreatetime(new Date());
+                platformMapper.insertSelective(platform);
+                resultCode.setRs(1);
+                resultCode.setValue(platform);
+            } catch (Exception e) {
+                e.printStackTrace();
+                checkResult.setCheckCode(-1);
+                checkResult.setCheckMsg("数据库插入操作错误");
+            }
+        } while (false);
+        if (checkResult.getCheckCode() < 0) {
             resultCode.setRs(checkResult.getCheckCode());
             resultCode.setMsg(checkResult.getCheckMsg());
         }
@@ -77,39 +95,55 @@ public class PlatformServiceImpl implements PlatformService {
 
     @Override
     public String processUpdate(Map<String, String> map) {
-        Gson gson = new Gson();
         ResultCode<Platform> resultCode = new ResultCode<Platform>();
-        CheckResult checkResult = processCheck(map, true);
-        if (checkResult.getCheckCode() > 0) {
-            try {
-                //如果通过校验
-                Platform platform = processModel(map);
-                //校验数据库中是否有可以进行插入操作
-                if (processDB(platform, false)) {
-                    int platformId = platform.getPlatformid();
-                    //根据传入的id获取之前数据库中存储的平台信息
-                    Platform oldplatform = platformDao.findById(platformId);
-                    //将平台名称 操作人id和更新时间置入平台信息model中
-                    oldplatform.setPlatformname(platform.getPlatformname());
-                    oldplatform.setUpdateid(checkResult.getOperatorId());
-                    oldplatform.setUpdatetime(new Date());
-                    //更新数据库
-                    platformMapper.updateByPrimaryKeySelective(oldplatform);
-                    resultCode.setRs(1);
-                    resultCode.setValue(oldplatform);
-                }else{
-                    //如果存在，则返回结果
-                    resultCode.setRs(-1);
-                    resultCode.setMsg("该平台名称已存在");
-                }
-            } catch (Exception e) {
-                //数据库更新失败
-                e.printStackTrace();
-                resultCode.setRs(-1);
-                resultCode.setMsg("数据库更新操作错误");
+        CheckResult checkResult = new CheckResult();
+        do {
+            //第一步 校验用户是否登录以及权限
+            checkUser(checkResult, true);
+            //如果未通过登录和权限校验，返回结果
+            if (checkResult.getCheckCode() < 0) {
+                break;
             }
-        } else {
-            //如果没有通过校验,则组织返回结果数据
+            //第二步 组织数据
+            Platform platform = new Platform();
+            try {
+                platform = processModel(map);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
+            //第三步 数据校验
+            processValidation(platform, checkResult);
+            if(checkResult.getCheckCode() < 0){
+                break;
+            }
+
+            //第四步 更新之前校验数据库
+            processDB(platform, checkResult, true);
+            if(checkResult.getCheckCode() < 0){
+                break;
+            }
+
+            //第五步 数据库更新操作
+            try {
+                int platformId = platform.getPlatformid();
+                //根据传入的主键id获取之前数据库中存储的平台信息
+                Platform oldPlatForm = platformMapper.selectByPrimaryKey(platformId);
+                //将平台名称、操作人id和操作时间置入平台信息model中
+                oldPlatForm.setUpdateid(checkResult.getOperatorId());
+                oldPlatForm.setUpdatetime(new Date());
+                oldPlatForm.setPlatformname(platform.getPlatformname());
+                //更新数据库
+                platformMapper.updateByPrimaryKeySelective(oldPlatForm);
+                resultCode.setRs(1);
+                resultCode.setValue(platform);
+            } catch (Exception e) {
+                e.printStackTrace();
+                checkResult.setCheckCode(-1);
+                checkResult.setCheckMsg("数据库更新操作错误");
+            }
+        } while (false);
+        if (checkResult.getCheckCode() < 0) {
             resultCode.setRs(checkResult.getCheckCode());
             resultCode.setMsg(checkResult.getCheckMsg());
         }
@@ -121,21 +155,40 @@ public class PlatformServiceImpl implements PlatformService {
 
     @Override
     public String processDelete(Map<String, String> map) {
-        Gson gson = new Gson();
         ResultCode<Platform> resultCode = new ResultCode<Platform>();
-        CheckResult checkResult = processCheck(map, true);
-        if (checkResult.getCheckCode() > 0) {
+        CheckResult checkResult = new CheckResult();
+        do {
+            //第一步 校验用户是否登录以及权限
+            checkUser(checkResult, true);
+            //如果未通过登录和权限校验，返回结果
+            if (checkResult.getCheckCode() < 0) {
+                break;
+            }
+            //第二步 组织数据
+            Platform platform = new Platform();
             try {
-                Platform platform = processModel(map);
-                platformMapper.deleteByPrimaryKey(platform.getPlatformid());
+                platform = processModel(map);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            if(platform.getPlatformid() == null){
+                checkResult.setCheckCode(-1);
+                checkResult.setCheckMsg("传入的主键id为空");
+            }
+
+            //第三步 数据库删除操作
+            try {
+                int platformId = platform.getPlatformid();
+                //根据传入的主键id删除数据库对应的平台信息
+                platformMapper.deleteByPrimaryKey(platformId);
                 resultCode.setRs(1);
             } catch (Exception e) {
                 e.printStackTrace();
-                resultCode.setRs(-1);
-                resultCode.setMsg("数据库删除操作错误");
+                checkResult.setCheckCode(-1);
+                checkResult.setCheckMsg("数据库删除操作错误");
             }
-        } else {
-            //如果没有通过校验,则组织返回结果数据
+        } while (false);
+        if (checkResult.getCheckCode() < 0) {
             resultCode.setRs(checkResult.getCheckCode());
             resultCode.setMsg(checkResult.getCheckMsg());
         }
@@ -147,21 +200,36 @@ public class PlatformServiceImpl implements PlatformService {
 
     @Override
     public String processList() {
-        Gson gson = new Gson();
         ResultCode<List<Platform>> resultCode = new ResultCode<List<Platform>>();
-//        if (tokenService.processCheckToken()) {
-            List<Platform> list = platformDao.findList();
-            if(list.isEmpty()){
-                resultCode.setRs(-10);
-                resultCode.setMsg("无数据");
-            }else{
-                resultCode.setRs(1);
-                resultCode.setValue(list);
+        CheckResult checkResult = new CheckResult();
+        do{
+            //第一步 校验用户是否登录以及权限
+            checkUser(checkResult, true);
+            //如果未通过登录和权限校验，返回结果
+            if (checkResult.getCheckCode() < 0) {
+                break;
             }
-//        } else {
-//            resultCode.setRs(-400);
-//            resultCode.setMsg("用户没有登录");
-//        }
+
+            //获取平台信息列表
+            try {
+                List<Platform> list = platformDao.findList();
+                if (list.isEmpty()) {
+                    resultCode.setRs(-10);
+                    resultCode.setMsg("无数据");
+                } else {
+                    resultCode.setRs(1);
+                    resultCode.setValue(list);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                checkResult.setCheckCode(-1);
+                checkResult.setCheckMsg("数据库操作错误");
+            }
+        }while(false);
+        if (checkResult.getCheckCode() < 0) {
+            resultCode.setRs(checkResult.getCheckCode());
+            resultCode.setMsg(checkResult.getCheckMsg());
+        }
         if (localtest) {
             return gson.toJson(resultCode);
         }
@@ -169,29 +237,29 @@ public class PlatformServiceImpl implements PlatformService {
     }
 
     /**
-     * 校验平台信息
+     * 校验用户是否登录以及权限校验(第一步)
      *
-     * @param map 平台信息
-     * @return 校验结果的list 如果非空则校验不通过
+     * @param checkResult      校验结果信息
+     * @param isCheckAuthority 是否校验用户权限
      */
-    private List<Validation> processValidation(Map<String, String> map) {
-        List<Validation> validations = new ArrayList<Validation>();
-        String platformName = "";
+    private void checkUser(CheckResult checkResult, boolean isCheckAuthority) {
         try {
-            platformName = map.get("platformName");
-            if (!localtest) {
-                platformName = new String(FBase64.decode(platformName));
+            User user = tokenService.processUser();
+            if (isCheckAuthority && user.getAuthority() != 1 && user.getAuthority() != 2) {
+                checkResult.setCheckCode(-1);
+                checkResult.setCheckMsg("对不起，您没有权限");
             }
-        } catch (Exception e) {
+            checkResult.setCheckCode(1);
+            checkResult.setOperatorId(user.getUserid());
+        } catch (Exception e) { // 用户没有登录，返回信息
             e.printStackTrace();
+            checkResult.setCheckCode(-400);
+            checkResult.setCheckMsg("用户没有登录");
         }
-        validationService.verifyString("平台名称", platformName, "validation",
-                "2", "10", true, validations);
-        return validations;
     }
 
     /**
-     * 将前端传入的数据置入model中
+     * 将前端传入的数据置入model中(第二步)
      *
      * @param map 前端传入的信息
      * @return 平台信息model
@@ -201,13 +269,13 @@ public class PlatformServiceImpl implements PlatformService {
         String platformId = map.get("platformId");
         String platformName = map.get("platformName");
         if (platformId != null && !"".equals(platformId)) {
-            if(!localtest){
+            if (!localtest) {
                 platformId = new String(FBase64.decode(platformId));
             }
             platform.setPlatformid(Integer.valueOf(platformId));
         }
         if (platformName != null && !"".equals(platformName)) {
-            if(!localtest){
+            if (!localtest) {
                 platformName = new String(FBase64.decode(platformName));
             }
             platform.setPlatformname(platformName);
@@ -216,70 +284,56 @@ public class PlatformServiceImpl implements PlatformService {
     }
 
     /**
-     * 登录校验，权限校验，传入信息校验（判空，判断长度）
+     * 校验平台信息(第三步)
      *
-     * @param map         出入信息
-     * @param isAuthority 是否进行权限判断
-     * @return 校验结果 checkCode字段 < 0 则校验不通过
+     * @param platform 平台信息model
+     * @return 校验结果的list 如果非空则校验不通过
      */
-    private CheckResult processCheck(@Nullable Map<String, String> map, boolean isAuthority) {
-        CheckResult platformCheckResult = new CheckResult();
-        User user;
-        //登录校验，获取登录人的信息
-//        try {
-//            user = tokenService.processUser();
-//            //如果需要权限校验,则进入判断进行权限校验
-//            if (isAuthority) {
-//                int authority = user.getAuthority();
-//                //权限校验
-//                if (authority == 3) {
-//                    platformCheckResult.setCheckCode(-1);
-//                    platformCheckResult.setCheckMsg("对不起，您没有权限");
-//                    return platformCheckResult;
-//                }
-//            }
-//        } catch (Exception e) {
-//            //进入到catch则说明用户没有登录，返回信息
-//            e.printStackTrace();
-//            platformCheckResult.setCheckCode(-400);
-//            platformCheckResult.setCheckMsg("用户没有登录");
-//            return platformCheckResult;
-//        }
-        //传入数据校验(包括判空和长度校验)
-        List<Validation> validations = processValidation(map);
+    private void processValidation(Platform platform, CheckResult checkResult) {
+        List<Validation> validations = new ArrayList<Validation>();
+        String platformName = platform.getPlatformname();
+        validationService.verifyString("平台名称", platformName, "validation",
+                "2", "10", true, validations);
         if (!validations.isEmpty()) {
-            //如果没通过校验
-            Validation validation = validations.get(0);
-            platformCheckResult.setCheckCode(-1);
-            platformCheckResult.setCheckMsg(validation.getField() + validation.getError());
-            return platformCheckResult;
+            checkResult.setCheckCode(-1);
+            checkResult.setCheckMsg(validations.get(0).getField() + validations.get(0).getError());
         }
-        //若通过全部校验,则将操作人员的id置入checkresult并返回
-        platformCheckResult.setCheckCode(1);
-        platformCheckResult.setOperatorId(1);
-//        platformCheckResult.setOperatorId(user.getUserid());
-        return platformCheckResult;
     }
 
     /**
-     * 校验是否可以进行插入或修改操作
+     * 校验是否可以进行插入或修改操作(第四步)
      *
-     * @param platform 平台信息
-     * @param isCreate true创建时校验/false修改时校验
-     * @return true可以/false不可以
+     * @param platform    平台信息
+     * @param checkResult 校验结果信息
+     * @param isCreate    true创建时校验/false修改时校验
      */
-    private boolean processDB(Platform platform, boolean isCreate) {
+    private void processDB(Platform platform, CheckResult checkResult, boolean isCreate) {
         List<Platform> list = new ArrayList<Platform>();
         try {
-            if(isCreate) {
+            //如果是创建时，则
+            if (isCreate) {
                 list = platformDao.findByPlatformName(platform.getPlatformname());
-                return list.isEmpty();
+                if (!list.isEmpty()) {
+                    checkResult.setCheckCode(-1);
+                    checkResult.setCheckMsg("平台名称已存在");
+                }
             }
-            list = platformDao.findByIdOrName(platform.getPlatformid(),platform.getPlatformname());
-            return  list.size() <= 1;
+            //如果通过id能搜索到数据，则说明id存在
+            if (platformMapper.selectByPrimaryKey(platform.getPlatformid()) != null) {
+                list = platformDao.findByIdOrName(platform.getPlatformid(), platform.getPlatformname());
+                if (list.size() > 1) {
+                    checkResult.setCheckCode(-1);
+                    checkResult.setCheckMsg("平台名称已存在");
+                }
+            } else {
+                checkResult.setCheckCode(-1);
+                checkResult.setCheckMsg("传入的id有误");
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            checkResult.setCheckCode(-1);
+            checkResult.setCheckMsg("平台名称已存在");
         }
     }
+
 }
