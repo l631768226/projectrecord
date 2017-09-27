@@ -218,7 +218,6 @@ public class UserServiceImpl implements UserService {
             if (checkResult.getCheckCode() < 0) {
                 break;
             }
-
             //获取平台信息列表
             try {
                 List<User> list = userDao.findList();
