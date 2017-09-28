@@ -1,7 +1,6 @@
 package hsoft.mobile.projectrecord.service;
 
 import com.google.gson.Gson;
-import com.sun.istack.internal.Nullable;
 import hsoft.mobile.projectrecord.dao.SkillDao;
 import hsoft.mobile.projectrecord.dao.UserDao;
 import hsoft.mobile.projectrecord.mapper.PlatformMapper;
