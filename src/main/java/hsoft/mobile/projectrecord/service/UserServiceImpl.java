@@ -110,6 +110,7 @@ public class UserServiceImpl implements UserService {
                 }
                 resultCode.setRs(1);
                 resultCode.setValue(user);
+                checkResult.setCheckCode(1);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
                 resultCode.setRs(-1);
@@ -189,10 +190,11 @@ public class UserServiceImpl implements UserService {
 
                 resultCode.setRs(1);
                 resultCode.setValue(oldUser);
+                checkResult.setCheckCode(1);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
-                resultCode.setRs(-1);
-                resultCode.setMsg("数据库更新操作错误");
+                checkResult.setCheckCode(-1);
+                checkResult.setCheckMsg("数据库更新操作错误");
             }
 
         } while (false);
@@ -212,7 +214,7 @@ public class UserServiceImpl implements UserService {
         CheckResult checkResult = new CheckResult();
         do{
             //第一步 校验用户是否登录以及权限
-            checkUser(checkResult, true);
+            checkUser(checkResult, false);
             //如果未通过登录和权限校验，返回结果
             if (checkResult.getCheckCode() < 0) {
                 break;
@@ -226,6 +228,7 @@ public class UserServiceImpl implements UserService {
                 } else {
                     resultCode.setRs(1);
                     resultCode.setValue(list);
+                    checkResult.setCheckCode(1);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -245,31 +248,56 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String processSkillList(Map<String, String> map) {
-        Gson gson = new Gson();
         ResultCode<List<User>> resultCode = new ResultCode<List<User>>();
-//        if (tokenService.processCheckToken()) {
-        String platformIdStr = map.get("platformId");
-        int platformId = 0;
-        if (!Common.checkNull(platformIdStr)) {
-            platformId = Integer.valueOf(platformIdStr);
-        }
-        if (platformMapper.selectByPrimaryKey(platformId) != null) {
-            List<User> list = userDao.findSkillList(platformId);
-            if (list.isEmpty()) {
-                resultCode.setRs(-10);
-                resultCode.setMsg("无数据");
-            } else {
-                resultCode.setRs(1);
-                resultCode.setValue(list);
+        CheckResult checkResult = new CheckResult();
+
+        do{
+            //第一步 校验用户是否登录以及权限
+            checkUser(checkResult, false);
+            if(checkResult.getCheckCode() < 0){
+                break;
             }
-        } else {
-            resultCode.setRs(-1);
-            resultCode.setMsg("该平台信息不存在");
+
+            //校验平台信息id是否为空
+            String platformIdStr = map.get("platformId");
+            int platformId = 0;
+            if (!Common.checkNull(platformIdStr)) {
+                try {
+                    platformId = Integer.valueOf(platformIdStr);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    checkResult.setCheckCode(-1);
+                    checkResult.setCheckMsg("传入平台信息id格式不正确");
+                    break;
+                }
+            }else{
+                checkResult.setCheckCode(-1);
+                checkResult.setCheckMsg("传入的平台信息id为空");
+                break;
+            }
+
+            //数据库操作
+            if (platformMapper.selectByPrimaryKey(platformId) != null) {
+                List<User> list = userDao.findSkillList(platformId);
+                if (list.isEmpty()) {
+                    checkResult.setCheckCode(-10);
+                    checkResult.setCheckMsg("无数据");
+                } else {
+                    resultCode.setRs(1);
+                    resultCode.setValue(list);
+                    checkResult.setCheckCode(1);
+                }
+            } else {
+                checkResult.setCheckCode(-1);
+                checkResult.setCheckMsg("该平台信息不存在");
+            }
+        }while(false);
+
+        if (checkResult.getCheckCode() < 0) {
+            resultCode.setRs(checkResult.getCheckCode());
+            resultCode.setMsg(checkResult.getCheckMsg());
         }
-//        } else {
-//            resultCode.setRs(-400);
-//            resultCode.setMsg("用户没有登录");
-//        }
+
         if (localtest) {
             return gson.toJson(resultCode);
         }
