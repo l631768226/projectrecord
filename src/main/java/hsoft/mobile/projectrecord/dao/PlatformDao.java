@@ -14,9 +14,6 @@ public interface PlatformDao {
     @Select("select * from platform where platformName = #{platformName}")
     List<Platform> findByPlatformName(@Param("platformName") String platformName);
 
-    @Select("select * from platform where platformId = ${platformId}")
-    Platform findById(@Param("platformId") int platformId);
-
     @Select("select * from platform")
     List<Platform> findList();
 
