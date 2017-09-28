@@ -136,6 +136,24 @@ public class TokenServiceImpl implements TokenService {
         }
     }
 
+    public User getUser(CheckResult checkResult, int priviledge) {
+        User user = new User();
+        try {
+            user = processUser();
+            checkResult.setCheckCode(1);
+        } catch (Exception e) { // 用户没有登录，返回信息
+            e.printStackTrace();
+            checkResult.setCheckCode(-400);
+            checkResult.setCheckMsg("用户没有登录");
+        }
+
+        if (user.getAuthority() > priviledge) {
+            checkResult.setCheckCode(-1);
+            checkResult.setCheckMsg("此用户没有相应的权限");
+        }
+
+        return user;
+    }
 
     /**
      * 获取浏览器的cookie

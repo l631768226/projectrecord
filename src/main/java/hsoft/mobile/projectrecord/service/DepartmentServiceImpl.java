@@ -43,14 +43,8 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         do {
             // 1.check user Authority
-            User user = getUser(checkResult);
+            User user = tokenService.getUser(checkResult, tokenService.PROJECT_MANAGER);
             if (checkResult.getCheckCode() < 0) break;
-
-            if ((user.getAuthority() != 1) && (user.getAuthority() != 2)) {
-                checkResult.setCheckCode(-1);
-                checkResult.setCheckMsg("此用户没有相应的权限");
-                break;
-            }
 
             // 2. extract data
             Department department;
@@ -98,14 +92,8 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         do {
             // 1.check user Authority
-            User user = getUser(checkResult);
+            User user = tokenService.getUser(checkResult, tokenService.PROJECT_MANAGER);
             if (checkResult.getCheckCode() < 0) break;
-
-            if ((user.getAuthority() != 1) && (user.getAuthority() != 2)) {
-                checkResult.setCheckCode(-1);
-                checkResult.setCheckMsg("此用户没有相应的权限");
-                break;
-            }
 
             // 2. extract data
             Department department;
@@ -153,14 +141,8 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         do {
             // 1.check user Authority
-            User user = getUser(checkResult);
+            User user = tokenService.getUser(checkResult, tokenService.PROJECT_MANAGER);
             if (checkResult.getCheckCode() < 0) break;
-
-            if ((user.getAuthority() != 1) && (user.getAuthority() != 2)) {
-                checkResult.setCheckCode(-1);
-                checkResult.setCheckMsg("此用户没有相应的权限");
-                break;
-            }
 
             // 2. extract data
             Department department;
@@ -243,19 +225,6 @@ public class DepartmentServiceImpl implements DepartmentService {
         return department;
     }
 
-    private User getUser(CheckResult checkResult){
-        User user = new User();
-        try {
-            user = tokenService.processUser();
-            checkResult.setCheckCode(1);
-        } catch (Exception e) { // 用户没有登录，返回信息
-            e.printStackTrace();
-            checkResult.setCheckCode(-400);
-            checkResult.setCheckMsg("用户没有登录");
-        }
-        return user;
-    }
-
     /**
      * 登录校验，权限校验，传入信息校验（判空，判断长度）
      *
@@ -318,5 +287,4 @@ public class DepartmentServiceImpl implements DepartmentService {
         }
         return checkResult;
     }
-
 }

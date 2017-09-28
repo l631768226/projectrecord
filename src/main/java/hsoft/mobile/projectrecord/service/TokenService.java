@@ -8,6 +8,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 public interface TokenService {
+    int SYSTEM_ADMIN = 1;
+    int PROJECT_MANAGER = 2;
+    int GENERAL_USER = 3;
 
     /**
      * 获取cookie信息对比redis中存储的token信息
@@ -42,4 +45,6 @@ public interface TokenService {
      * @param isCheckAuthority 是否校验用户权限
      */
     void processCheckUser(CheckResult checkResult, boolean isCheckAuthority);
+
+    User getUser(CheckResult checkResult, int priviledge);
 }
