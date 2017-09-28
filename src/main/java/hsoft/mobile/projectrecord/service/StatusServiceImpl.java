@@ -88,6 +88,162 @@ public class StatusServiceImpl implements StatusService {
         return FBase64.encode(gson.toJson(resultCode).getBytes());
     }
 
+    @Override
+    public String processUpdate(Map<String, String> map) {
+        ResultCode<StatusCategory> resultCode = new ResultCode<StatusCategory>();
+        CheckResult checkResult = new CheckResult();
+        do{
+            //第一步 校验用户是否登录以及权限
+            checkUser(checkResult, true);
+            //如果未通过登录和权限校验，返回结果
+            if (checkResult.getCheckCode() < 0) {
+                break;
+            }
+
+            //第二步 准备数据
+            StatusCategory statusCategory = new StatusCategory();
+            try {
+                statusCategory = processModel(map);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
+            //第三步 数据校验
+            processValidation(statusCategory, checkResult);
+            if(checkResult.getCheckCode() < 0){
+                break;
+            }
+
+            //第四步 插入之前校验数据库
+            processDB(statusCategory, checkResult, false);
+
+            //第五步 数据库更新操作
+            try {
+                int statusCategoryId = statusCategory.getStatuscategoryid();
+                //根据主键id查询状态类型信息model
+                StatusCategory oldStatusCategory1 = statusCategoryMapper.selectByPrimaryKey(statusCategoryId);
+                //将类型信息名称、更新人id、更新时间置入model
+                oldStatusCategory1.setUpdateid(checkResult.getOperatorId());
+                oldStatusCategory1.setUpdatetime(new Date());
+                oldStatusCategory1.setStatusname(statusCategory.getStatusname());
+
+                statusCategoryMapper.updateByPrimaryKey(oldStatusCategory1);
+                resultCode.setRs(1);
+                resultCode.setValue(oldStatusCategory1);
+                checkResult.setCheckCode(1);
+            } catch (Exception e) {
+                e.printStackTrace();
+                checkResult.setCheckCode(-1);
+                checkResult.setCheckMsg("数据库更新操作错误");
+            }
+
+        }while(false);
+
+        if (checkResult.getCheckCode() < 0) {
+            resultCode.setRs(checkResult.getCheckCode());
+            resultCode.setMsg(checkResult.getCheckMsg());
+        }
+        if (localtest) {
+            return gson.toJson(resultCode);
+        }
+        return FBase64.encode(gson.toJson(resultCode).getBytes());
+    }
+
+    @Override
+    public String processDelete(Map<String, String> map) {
+        ResultCode<StatusCategory> resultCode = new ResultCode<StatusCategory>();
+        CheckResult checkResult = new CheckResult();
+        do{
+            //第一步 校验用户是否登录以及权限
+            checkUser(checkResult, true);
+            //如果未通过登录和权限校验，返回结果
+            if (checkResult.getCheckCode() < 0) {
+                break;
+            }
+
+            //第二步 准备数据
+            StatusCategory statusCategory = new StatusCategory();
+            try {
+                statusCategory = processModel(map);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
+            //第三步 数据校验
+            if (statusCategory.getStatuscategoryid() == null){
+                checkResult.setCheckCode(-1);
+                checkResult.setCheckMsg("传入的主键id为空");
+                break;
+            }
+
+            //第四步 数据库删除操作
+            try {
+                int statusCategoryId = statusCategory.getStatuscategoryid();
+                //根据主键id删除状态类型信息model
+                statusCategoryMapper.deleteByPrimaryKey(statusCategoryId);
+
+                resultCode.setRs(1);
+                checkResult.setCheckCode(1);
+            } catch (Exception e) {
+                e.printStackTrace();
+                checkResult.setCheckCode(-1);
+                checkResult.setCheckMsg("数据库删除操作错误");
+            }
+
+        }while(false);
+
+        if (checkResult.getCheckCode() < 0) {
+            resultCode.setRs(checkResult.getCheckCode());
+            resultCode.setMsg(checkResult.getCheckMsg());
+        }
+        if (localtest) {
+            return gson.toJson(resultCode);
+        }
+        return FBase64.encode(gson.toJson(resultCode).getBytes());
+    }
+
+    @Override
+    public String processList() {
+        ResultCode<List<StatusCategory>> resultCode = new ResultCode<List<StatusCategory>>();
+        CheckResult checkResult = new CheckResult();
+        do{
+            //第一步 校验用户是否登录以及权限
+            checkUser(checkResult, true);
+            //如果未通过登录和权限校验，返回结果
+            if (checkResult.getCheckCode() < 0) {
+                break;
+            }
+
+            //第二步 获取状态类型列表
+            try {
+                List<StatusCategory> list = statusDao.findList();
+
+                if (list.isEmpty()) {
+                    checkResult.setCheckCode(-10);
+                    checkResult.setCheckMsg("无数据");
+                } else {
+                    resultCode.setRs(1);
+                    resultCode.setValue(list);
+                    checkResult.setCheckCode(1);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                checkResult.setCheckCode(-1);
+                checkResult.setCheckMsg("数据库操作错误");
+            }
+
+        }while(false);
+
+        if (checkResult.getCheckCode() < 0) {
+            resultCode.setRs(checkResult.getCheckCode());
+            resultCode.setMsg(checkResult.getCheckMsg());
+        }
+        if (localtest) {
+            return gson.toJson(resultCode);
+        }
+        return FBase64.encode(gson.toJson(resultCode).getBytes());
+    }
+
     /**
      * 校验用户是否登录以及权限校验(第一步)
      *

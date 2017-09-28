@@ -27,4 +27,21 @@ public class StatusController {
         return statusService.processCreate(map);
     }
 
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @ResponseBody
+    public String processUpdate(Map<String, String> map){
+        return statusService.processUpdate(map);
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @ResponseBody
+    public String processDelete(Map<String, String> map){
+        return statusService.processDelete(map);
+    }
+
+    @RequestMapping(value = "/list", method = RequestMethod.POST)
+    @ResponseBody
+    public String processList(){
+        return statusService.processList();
+    }
 }

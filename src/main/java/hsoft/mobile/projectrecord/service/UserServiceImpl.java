@@ -156,7 +156,7 @@ public class UserServiceImpl implements UserService {
             }
 
             //第四步 插入操作之前校验数据库
-            processDB(user, checkResult, true);
+            processDB(user, checkResult, false);
             if (checkResult.getCheckCode() < 0) {
                 break;
             }
