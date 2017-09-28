@@ -35,6 +35,9 @@ public class FBase64 {
             41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1};
    
     public static String encode(byte[] data) {
+        if(data == null){
+            return "";
+        }
         StringBuffer sb = new StringBuffer();
         
         Random r = new Random();
@@ -80,6 +83,9 @@ public class FBase64 {
     }
     
     public static byte[] decode(String str) throws UnsupportedEncodingException {
+        if(str == null){
+            return "".getBytes();
+        }
         byte[] data = str.getBytes("US-ASCII");
         int len = data.length;
         if ((len % 4) == 2)
