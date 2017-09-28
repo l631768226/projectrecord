@@ -329,15 +329,18 @@ public class PlatformServiceImpl implements PlatformService {
                 if (list.size() > 1) {
                     checkResult.setCheckCode(-1);
                     checkResult.setCheckMsg("平台名称已存在");
+                    return;
                 }
             } else {
                 checkResult.setCheckCode(-1);
                 checkResult.setCheckMsg("传入的id有误");
+                return;
             }
         } catch (Exception e) {
             e.printStackTrace();
             checkResult.setCheckCode(-1);
             checkResult.setCheckMsg("平台名称已存在");
+            return;
         }
     }
 
