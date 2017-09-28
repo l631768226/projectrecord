@@ -1,125 +1,70 @@
 package hsoft.mobile.projectrecord.model;
 
-import java.util.Date;
+import hsoft.mobile.projectrecord.utils.Common;
 
-public class Issue {
-    private Integer issueid;
+import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
-    private String projindex;
+public class Issue extends BaseData
+{
+    private String issueProjIndex;
 
-    private Integer reqid;
+    private Integer issueReqId;
 
-    private Integer issuecategoryid;
+    private Integer issueCategoryId;
 
-    private String issuedescription;
+    private Integer issuePlatformId;
 
-    private Integer platformid;
+    private String issueDescription;
 
-    private String issuesolution;
+    private String issueSolution;
 
-    private Integer createid;
-
-    private Date createtime;
-
-    private Integer updateid;
-
-    private Date updatetime;
-
-    private Integer hide;
-
-    public Integer getIssueid() {
-        return issueid;
+    public String getIssueProjIndex() {
+        return issueProjIndex;
     }
 
-    public void setIssueid(Integer issueid) {
-        this.issueid = issueid;
+    public void setIssueProjIndex(String issueProjIndex) {
+        this.issueProjIndex = issueProjIndex;
     }
 
-    public String getProjindex() {
-        return projindex;
+    public Integer getReqId() {
+        return issueReqId;
     }
 
-    public void setProjindex(String projindex) {
-        this.projindex = projindex == null ? null : projindex.trim();
+    public void setIssueReqId(Integer issueReqId) {
+        this.issueReqId = issueReqId;
     }
 
-    public Integer getReqid() {
-        return reqid;
+    public Integer getIssueCategoryId() {
+        return issueCategoryId;
     }
 
-    public void setReqid(Integer reqid) {
-        this.reqid = reqid;
+    public void setIssueCategoryId(Integer issueCategoryId) {
+        this.issueCategoryId = issueCategoryId;
     }
 
-    public Integer getIssuecategoryid() {
-        return issuecategoryid;
+    public String getIssueDescription() {
+        return issueDescription;
     }
 
-    public void setIssuecategoryid(Integer issuecategoryid) {
-        this.issuecategoryid = issuecategoryid;
+    public void setIssueDescription(String issueDescription) {
+        this.issueDescription = issueDescription;
     }
 
-    public String getIssuedescription() {
-        return issuedescription;
+    public Integer getIssuePlatformId() {
+        return issuePlatformId;
     }
 
-    public void setIssuedescription(String issuedescription) {
-        this.issuedescription = issuedescription == null ? null : issuedescription.trim();
+    public void setIssuePlatformId(Integer issuePlatformId) {
+        this.issuePlatformId = issuePlatformId;
     }
 
-    public Integer getPlatformid() {
-        return platformid;
+    public String getIssueSolution() {
+        return issueSolution;
     }
 
-    public void setPlatformid(Integer platformid) {
-        this.platformid = platformid;
+    public void setIssueSolution(String issueSolution) {
+        this.issueSolution = issueSolution;
     }
 
-    public String getIssuesolution() {
-        return issuesolution;
-    }
-
-    public void setIssuesolution(String issuesolution) {
-        this.issuesolution = issuesolution == null ? null : issuesolution.trim();
-    }
-
-    public Integer getCreateid() {
-        return createid;
-    }
-
-    public void setCreateid(Integer createid) {
-        this.createid = createid;
-    }
-
-    public Date getCreatetime() {
-        return createtime;
-    }
-
-    public void setCreatetime(Date createtime) {
-        this.createtime = createtime;
-    }
-
-    public Integer getUpdateid() {
-        return updateid;
-    }
-
-    public void setUpdateid(Integer updateid) {
-        this.updateid = updateid;
-    }
-
-    public Date getUpdatetime() {
-        return updatetime;
-    }
-
-    public void setUpdatetime(Date updatetime) {
-        this.updatetime = updatetime;
-    }
-
-    public Integer getHide() {
-        return hide;
-    }
-
-    public void setHide(Integer hide) {
-        this.hide = hide;
-    }
 }

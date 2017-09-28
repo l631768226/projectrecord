@@ -1,9 +1,11 @@
 package hsoft.mobile.projectrecord.utils;
 
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class Common {
 
@@ -74,5 +76,36 @@ public class Common {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 从map中取数据
+     * @param map
+     * @param itemName 项目名称
+     * @return item内容
+     * @throws UnsupportedEncodingException
+     */
+    public static String parseString(Map<String, String> map, String itemName) throws UnsupportedEncodingException {
+        String item = map.get(itemName);
+        if (!localtest) {
+            item = new String(FBase64.decode(item));
+        }
+        return item;
+    }
+
+
+    /**
+     * 从map中取数据
+     * @param map
+     * @param itemName 项目名称
+     * @return item内容
+     * @throws UnsupportedEncodingException
+     */
+    public static Integer parseInteger(Map<String, String> map, String itemName) throws UnsupportedEncodingException {
+        String item = map.get(itemName);
+        if (!localtest) {
+            item = new String(FBase64.decode(item));
+        }
+        return Integer.valueOf(item);
     }
 }
