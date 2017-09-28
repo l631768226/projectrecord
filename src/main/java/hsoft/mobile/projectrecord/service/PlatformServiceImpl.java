@@ -77,6 +77,7 @@ public class PlatformServiceImpl implements PlatformService {
                 platformMapper.insertSelective(platform);
                 resultCode.setRs(1);
                 resultCode.setValue(platform);
+                checkResult.setCheckCode(1);
             } catch (Exception e) {
                 e.printStackTrace();
                 checkResult.setCheckCode(-1);
@@ -137,6 +138,7 @@ public class PlatformServiceImpl implements PlatformService {
                 platformMapper.updateByPrimaryKeySelective(oldPlatForm);
                 resultCode.setRs(1);
                 resultCode.setValue(platform);
+                checkResult.setCheckCode(1);
             } catch (Exception e) {
                 e.printStackTrace();
                 checkResult.setCheckCode(-1);
@@ -174,6 +176,7 @@ public class PlatformServiceImpl implements PlatformService {
             if(platform.getPlatformid() == null){
                 checkResult.setCheckCode(-1);
                 checkResult.setCheckMsg("传入的主键id为空");
+                break;
             }
 
             //第三步 数据库删除操作
@@ -182,6 +185,7 @@ public class PlatformServiceImpl implements PlatformService {
                 //根据传入的主键id删除数据库对应的平台信息
                 platformMapper.deleteByPrimaryKey(platformId);
                 resultCode.setRs(1);
+                checkResult.setCheckCode(1);
             } catch (Exception e) {
                 e.printStackTrace();
                 checkResult.setCheckCode(-1);
@@ -214,11 +218,12 @@ public class PlatformServiceImpl implements PlatformService {
             try {
                 List<Platform> list = platformDao.findList();
                 if (list.isEmpty()) {
-                    resultCode.setRs(-10);
-                    resultCode.setMsg("无数据");
+                    checkResult.setCheckCode(-10);
+                    checkResult.setCheckMsg("无数据");
                 } else {
                     resultCode.setRs(1);
                     resultCode.setValue(list);
+                    checkResult.setCheckCode(1);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
