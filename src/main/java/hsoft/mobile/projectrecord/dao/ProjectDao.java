@@ -1,4 +1,4 @@
-package hsoft.mobile.projectrecord.controller;
+package hsoft.mobile.projectrecord.dao;
 
 import hsoft.mobile.projectrecord.model.ProjectInfo;
 import org.apache.ibatis.annotations.Param;

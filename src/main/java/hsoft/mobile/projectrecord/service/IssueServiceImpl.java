@@ -1,7 +1,6 @@
 package hsoft.mobile.projectrecord.service;
 
 import com.google.gson.Gson;
-import com.sun.istack.internal.Nullable;
 import hsoft.mobile.projectrecord.dao.*;
 import hsoft.mobile.projectrecord.mapper.IssueMapper;
 import hsoft.mobile.projectrecord.model.*;
@@ -17,12 +16,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 问题类型信息Service
+ * 问题信息 Service
  * create by TX on 2017/9/27
  */
 
 @Service
 public class IssueServiceImpl implements IssueCategoryService {
+
+    private static int CREATE = 0;
+    private static int UPDATE = 0;
+    private static int DELETE = 0;
 
     @Autowired
     private ValidationService validationService;
@@ -39,48 +42,38 @@ public class IssueServiceImpl implements IssueCategoryService {
     @Autowired
     private PlatformDao platformDao;
 
-
     private boolean localtest = Common.localtest;
 
     @Override
     public String processCreate(Map<String, String> map) {
         Gson gson = new Gson();
-        ResultCode<Issue> resultCode = new ResultCode<Issue>();
+        ResultCode<Issue> resultCode = new ResultCode<>();
         CheckResult checkResult = new CheckResult();
 
         do {
-            Issue  issue;
-
-            // 1.check user Authority （irrelevant to business）
+            // 1.check user login and Authority
             User user = getUser(checkResult);
             if (checkResult.getCheckCode() < 0) break;
 
-            if ((user.getAuthority() != 1) && (user.getAuthority() != 2)) {
+            if (user.getAuthority() >= 3) {
                 checkResult.setCheckCode(-1);
                 checkResult.setCheckMsg("此用户没有相应的权限");
                 break;
             }
 
-            // 2. extract data
+            // 2. extract data and check data format
+            Issue  issue;
             try {
-                issue =  parseIssue(map, false, checkResult);
+                issue =  parseIssue(map, CREATE, checkResult);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
                 checkResult.setCheckCode(-1);
                 checkResult.setCheckMsg("传入数据错误！");
                 break;
             }
+            if (checkResult.getCheckCode() < 0) break; // some data is invalid: format or database error
 
-            // 3. check data format
-            checkResult = checkIssueFormat(issue);
-            if (checkResult.getCheckCode() < 0) break;
-
-
-
-
-            if (checkResult.getCheckCode() < 0) break;
-
-            // 5. insert data to database
+            // 3. insert data to database
             issue.setCreateId(user.getUserid());
             issue.setCreateTime(new Date());
             issueMapper.insertSelective(issue);
@@ -102,46 +95,39 @@ public class IssueServiceImpl implements IssueCategoryService {
     @Override
     public String processUpdate(Map<String, String> map) {
         Gson gson = new Gson();
-        ResultCode<IssueCategory> resultCode = new ResultCode<IssueCategory>();
+        ResultCode<Issue> resultCode = new ResultCode<>();
         CheckResult checkResult = new CheckResult();
 
         do {
-            // 1.check user Authority
+            // 1.check user Authority（irrelevant to business）
             User user = getUser(checkResult);
             if (checkResult.getCheckCode() < 0) break;
 
-            if ((user.getAuthority() != 1) && (user.getAuthority() != 2)) {
+            if (user.getAuthority() >= 3) {
                 checkResult.setCheckCode(-1);
                 checkResult.setCheckMsg("此用户没有相应的权限");
                 break;
             }
 
-            // 2. extract data
-            IssueCategory issueCategory;
+            // 2. extract data and check data format
+            Issue issue;
             try {
-                issueCategory = parseData(map);
+                issue =  parseIssue(map, UPDATE, checkResult);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
                 checkResult.setCheckCode(-1);
                 checkResult.setCheckMsg("传入数据错误！");
                 break;
             }
+            if (checkResult.getCheckCode() < 0) break; // some data is invalid: format or database error
 
-            // 3. check IssueCategory name
-            checkResult = checkDataFormat(issueCategory);
-            if (checkResult.getCheckCode() < 0) break;
-
-            // 4. check database
-            checkResult = checkDatabaseByIdAndName(issueCategory.getIssueCategoryId(), issueCategory.getIssueName());
-            if (checkResult.getCheckCode() < 0) break;
-
-            // 5. update data to database
-            issueCategory.setUpdateid(user.getUserid());
-            issueCategory.setUpdatetime(new Date());
-            issueCategoryMapper.updateByPrimaryKeySelective(issueCategory);
+            // 3. update data to database
+            issue.setUpdateId(user.getUserid());
+            issue.setUpdateTime(new Date());
+            issueMapper.updateByPrimaryKeySelective(issue);
 
             resultCode.setRs(1);
-            resultCode.setValue(issueCategory);
+            resultCode.setValue(issue);
         } while (false);
 
         if (checkResult.getCheckCode() < 0) {
@@ -157,7 +143,7 @@ public class IssueServiceImpl implements IssueCategoryService {
     @Override
     public String processDelete(Map<String, String> map) {
         Gson gson = new Gson();
-        ResultCode<IssueCategory> resultCode = new ResultCode<IssueCategory>();
+        ResultCode<Issue> resultCode = new ResultCode<Issue>();
         CheckResult checkResult = new CheckResult();
 
         do {
@@ -165,32 +151,31 @@ public class IssueServiceImpl implements IssueCategoryService {
             User user = getUser(checkResult);
             if (checkResult.getCheckCode() < 0) break;
 
-            if ((user.getAuthority() != 1) && (user.getAuthority() != 2)) {
+            if (user.getAuthority() >= 3) {
                 checkResult.setCheckCode(-1);
                 checkResult.setCheckMsg("此用户没有相应的权限");
                 break;
             }
 
             // 2. extract data
-            IssueCategory issueCategory;
+            Issue issue;
             try {
-                issueCategory = parseIssue(map);
+                issue = parseIssue(map, DELETE, checkResult);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
                 checkResult.setCheckCode(-1);
                 checkResult.setCheckMsg("传入数据错误！");
                 break;
             }
+            if (checkResult.getCheckCode() < 0) break; // some data is invalid: format or database error
 
-            // 3. check database
-            checkResult = checkDatabaseById(issueCategory.getIssueCategoryId());
-            if (checkResult.getCheckCode() < 0) break;
-
-            // 5. delete data from database
-            issueCategoryMapper.deleteByPrimaryKey(issueCategory.getIssueCategoryId());
+            // 3. delete data from database
+            issue.setUpdateId(user.getUserid());
+            issue.setUpdateTime(new Date());
+            issueMapper.deleteByPrimaryKey(issue.getId());
 
             resultCode.setRs(1);
-            resultCode.setValue(issueCategory);
+            resultCode.setValue(issue);
         } while (false);
 
         if (checkResult.getCheckCode() < 0) {
@@ -206,10 +191,10 @@ public class IssueServiceImpl implements IssueCategoryService {
     @Override
     public String processList() {
         Gson gson = new Gson();
-        ResultCode<List<IssueCategory>> resultCode = new ResultCode<List<IssueCategory>>();
+        ResultCode<List<Issue>> resultCode = new ResultCode<List<Issue>>();
 
         if (tokenService.processCheckToken()) {
-            List<IssueCategory> list = issueCategoryDao.findList();
+            List<Issue> list = issueDao.findList();
             if (list.isEmpty()) {
                 resultCode.setRs(-10);
                 resultCode.setMsg("无数据");
@@ -246,11 +231,13 @@ public class IssueServiceImpl implements IssueCategoryService {
      * @param map 前端传入的信息
      * @return Issue Model
      */
-    private Issue parseIssue(Map<String, String> map, boolean isUpdate, CheckResult checkResult) throws UnsupportedEncodingException {
+    private Issue parseIssue(Map<String, String> map, int flag, CheckResult checkResult) throws UnsupportedEncodingException {
         Issue issue = new Issue();
+        List<Validation> validations = new ArrayList<Validation>();
+        checkResult = new CheckResult();
 
         issue.setId(Common.parseInteger(map,"issueId"));
-        if (isUpdate) { // 数据库中应该存在
+        if (UPDATE == flag || DELETE == flag) { // 数据库中应该存在传入的问题编号
             if (null == issueDao.findById(issue.getId())) {
                 checkResult.setCheckCode(-1);
                 checkResult.setCheckMsg("问题编号不存在");
@@ -258,8 +245,12 @@ public class IssueServiceImpl implements IssueCategoryService {
             }
         }
 
+        if (DELETE == flag) {
+            return issue;
+        }
+
         issue.setIssueProjIndex(Common.parseString(map, "issueProjIndex"));
-        if (null == projectDao.findById(issue.getIssueProjIndex())) {
+        if (null == projectDao.findByIndex(issue.getIssueProjIndex())) {
             checkResult.setCheckCode(-1);
             checkResult.setCheckMsg("该项目编号不存在");
             return null;
@@ -282,14 +273,18 @@ public class IssueServiceImpl implements IssueCategoryService {
         }
 
         issue.setIssueDescription(Common.parseString(map, "issueDescription"));
-        if(issue.getIssueDescription() == null ||
-                "".equals(issue.getIssueDescription().toString().trim())) {
-            checkResult.setCheckCode(-1);
-            checkResult.setCheckMsg("问题描述不能为空");
-            return null;
-        } else if ()
+        validationService.verifyString("问题描述", issue.getIssueDescription(), "validation",
+                "1", "255", false, validations);
 
         issue.setIssueSolution(Common.parseString(map, "issueSolution"));
+        validationService.verifyString("解决方案或后果", issue.getIssueSolution(), "validation",
+                "1", "255", true, validations);
+
+        if (!validations.isEmpty()) {
+            checkResult.setCheckCode(-1);
+            checkResult.setCheckMsg(validations.get(0).getField() + validations.get(0).getError());
+            return null;
+        }
 
         return issue;
     }

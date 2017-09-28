@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * create by TX on 2017/9/26
  */
-public interface IssueDao extends BaseDao {
+public interface IssueDao {
 
     @Select("select * from issue where name = #{name}")
     List<Issue> findByName(@Param("name") String name);
