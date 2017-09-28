@@ -1,5 +1,6 @@
 package hsoft.mobile.projectrecord.service;
 
+import hsoft.mobile.projectrecord.dao.UserDao;
 import hsoft.mobile.projectrecord.model.CheckResult;
 import hsoft.mobile.projectrecord.model.ProjectInfo;
 import hsoft.mobile.projectrecord.model.User;
@@ -21,6 +22,9 @@ public class ProjectServiceImpl implements ProjectService {
     private ValidationService validationService;
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private UserDao userDao;
 
     //本地测试时为true
     private boolean localtest = Common.localtest;
@@ -52,10 +56,18 @@ public class ProjectServiceImpl implements ProjectService {
         }
     }
 
+    /**
+     * 将前端传入的数据置入model中(第二步)
+     * @param map 前端传入的信息
+     * @return 项目信息model
+     * @throws UnsupportedEncodingException
+     */
     private ProjectInfo processModel(Map<String, String> map) throws UnsupportedEncodingException {
         ProjectInfo projectInfo = new ProjectInfo();
         //项目编号
         String projIndex = map.get("projIndex");
+        //项目名称
+        String projName = map.get("projName");
         //项目描述
         String projDescription = map.get("projDescription");
         //项目负责人
@@ -64,49 +76,41 @@ public class ProjectServiceImpl implements ProjectService {
         //部门来源
         String deptIdStr = map.get("deptId");
         int deptId = 0;
+        //对协作部门的评价
+        String projComment = map.get("projComment");
+        //项目状态
+        String projStatusStr = map.get("projStatus");
+        int projStatus = 0;
+        //项目评分
+        String projScoreStr = map.get("projScore");
+        float projScore = 0;
 
-        //设置项目编号
-        if (!Common.checkNull(projIndex)) {
-            if (!localtest) {
-                projIndex = new String(FBase64.decode(projIndex));
-            }
-            projectInfo.setProjindex(projIndex);
-        }
-        //设置项目描述
-        if (!Common.checkNull(projDescription)) {
-            if (!localtest) {
-                projDescription = new String(FBase64.decode(projDescription));
-            }
-            projectInfo.setProjdescription(projDescription);
-        }
-        //设置项目负责人
-        if (!Common.checkNull(projManagerStr)) {
-            if (!localtest) {
-                projManagerStr = new String(FBase64.decode(projManagerStr));
-            }
-            try{
-                projManager = Integer.valueOf(projManagerStr);
-            }catch(Exception e){
-                e.printStackTrace();
-                projManager = 0;
-            }
-            projectInfo.setProjmanager(projManager);
-        }
-        //设置项目部门来源
-        if (!Common.checkNull(deptIdStr)) {
-            if (!localtest) {
-                deptIdStr = new String(FBase64.decode(deptIdStr));
-            }
-            try{
-                deptId = Integer.valueOf(deptIdStr);
-            }catch(Exception e){
-                e.printStackTrace();
-                deptId = 0;
-            }
-            projectInfo.setDeptid(deptId);
-        }
+        if (!localtest) {
+            projIndex = new String(FBase64.decode(projIndex));
+            projName = new String(FBase64.decode(projName));
+            projDescription = new String(FBase64.decode(projDescription));
+            projComment = new String(FBase64.decode(projComment));
 
-
+            projManagerStr = new String(FBase64.decode(projManagerStr));
+            deptIdStr = new String(FBase64.decode(deptIdStr));
+            projScoreStr = new String(FBase64.decode(projScoreStr));
+        }
+        projectInfo.setProjindex(projIndex);
+        projectInfo.setProjname(projName);
+        projectInfo.setProjdescription(projDescription);
+        try {
+            projManager = Integer.valueOf(projManagerStr);
+            deptId = Integer.valueOf(deptIdStr);
+            projStatus = Integer.valueOf(projStatusStr);
+            projScore = Float.valueOf(projScoreStr);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        projectInfo.setProjmanager(projManager);
+        projectInfo.setDeptid(deptId);
+        projectInfo.setProjcomment(projComment);
+        projectInfo.setStatuscategoryid(projStatus);
+        projectInfo.setProjscore(projScore);
 
         return projectInfo;
     }
