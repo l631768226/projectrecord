@@ -120,7 +120,7 @@ public class PlatformServiceImpl implements PlatformService {
             }
 
             //第四步 更新之前校验数据库
-            processDB(platform, checkResult, true);
+            processDB(platform, checkResult, false);
             if(checkResult.getCheckCode() < 0){
                 break;
             }
@@ -208,7 +208,7 @@ public class PlatformServiceImpl implements PlatformService {
         CheckResult checkResult = new CheckResult();
         do{
             //第一步 校验用户是否登录以及权限
-            checkUser(checkResult, true);
+            checkUser(checkResult, false);
             //如果未通过登录和权限校验，返回结果
             if (checkResult.getCheckCode() < 0) {
                 break;
@@ -329,15 +329,18 @@ public class PlatformServiceImpl implements PlatformService {
                 if (list.size() > 1) {
                     checkResult.setCheckCode(-1);
                     checkResult.setCheckMsg("平台名称已存在");
+                    return;
                 }
             } else {
                 checkResult.setCheckCode(-1);
                 checkResult.setCheckMsg("传入的id有误");
+                return;
             }
         } catch (Exception e) {
             e.printStackTrace();
             checkResult.setCheckCode(-1);
             checkResult.setCheckMsg("平台名称已存在");
+            return;
         }
     }
 

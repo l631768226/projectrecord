@@ -156,7 +156,7 @@ public class UserServiceImpl implements UserService {
             }
 
             //第四步 插入操作之前校验数据库
-            processDB(user, checkResult, true);
+            processDB(user, checkResult, false);
             if (checkResult.getCheckCode() < 0) {
                 break;
             }
@@ -212,7 +212,7 @@ public class UserServiceImpl implements UserService {
     public String processList() {
         ResultCode<List<User>> resultCode = new ResultCode<List<User>>();
         CheckResult checkResult = new CheckResult();
-        do{
+        do {
             //第一步 校验用户是否登录以及权限
             checkUser(checkResult, false);
             //如果未通过登录和权限校验，返回结果
@@ -235,7 +235,7 @@ public class UserServiceImpl implements UserService {
                 checkResult.setCheckCode(-1);
                 checkResult.setCheckMsg("数据库操作错误");
             }
-        }while(false);
+        } while (false);
         if (checkResult.getCheckCode() < 0) {
             resultCode.setRs(checkResult.getCheckCode());
             resultCode.setMsg(checkResult.getCheckMsg());
@@ -251,10 +251,10 @@ public class UserServiceImpl implements UserService {
         ResultCode<List<User>> resultCode = new ResultCode<List<User>>();
         CheckResult checkResult = new CheckResult();
 
-        do{
+        do {
             //第一步 校验用户是否登录以及权限
             checkUser(checkResult, false);
-            if(checkResult.getCheckCode() < 0){
+            if (checkResult.getCheckCode() < 0) {
                 break;
             }
 
@@ -270,7 +270,7 @@ public class UserServiceImpl implements UserService {
                     checkResult.setCheckMsg("传入平台信息id格式不正确");
                     break;
                 }
-            }else{
+            } else {
                 checkResult.setCheckCode(-1);
                 checkResult.setCheckMsg("传入的平台信息id为空");
                 break;
@@ -291,7 +291,7 @@ public class UserServiceImpl implements UserService {
                 checkResult.setCheckCode(-1);
                 checkResult.setCheckMsg("该平台信息不存在");
             }
-        }while(false);
+        } while (false);
 
         if (checkResult.getCheckCode() < 0) {
             resultCode.setRs(checkResult.getCheckCode());
@@ -367,48 +367,36 @@ public class UserServiceImpl implements UserService {
      */
     private User processModel(Map<String, String> map) throws UnsupportedEncodingException {
         User user = new User();
-        String userid = map.get("userId");
+        String useridStr = map.get("userId");
         String username = map.get("username");
         String password = map.get("password");
         String realname = map.get("realname");
         String authority = map.get("authority");
-        if (userid != null && !"".equals(userid)) {
-            if (!localtest) {
-                userid = new String(FBase64.decode(userid));
-            }
-            user.setUserid(Integer.valueOf(userid));
+        int userId = 0;
+        if (!localtest) {
+            useridStr = new String(FBase64.decode(useridStr));
+            username = new String(FBase64.decode(username));
+            password = new String(FBase64.decode(password));
+            realname = new String(FBase64.decode(realname));
+            authority = new String(FBase64.decode(authority));
         }
-        if (username != null && !"".equals(username)) {
-            if (!localtest) {
-                username = new String(FBase64.decode(username));
-            }
-            user.setUsername(username);
+        try {
+            userId = Integer.valueOf(useridStr);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
         }
-        if (password != null && !"".equals(password)) {
-            if (!localtest) {
-                password = new String(FBase64.decode(password));
-            }
-            user.setPassword(password);
-        }
-        if (realname != null && !"".equals(realname)) {
-            if (!localtest) {
-                realname = new String(FBase64.decode(realname));
-            }
-            user.setRealname(realname);
-        }
-        if (authority != null && !"".equals(authority)) {
-            if (!localtest) {
-                authority = new String(FBase64.decode(authority));
-            }
-            user.setAuthority(Integer.valueOf(authority));
-        }
+        user.setUserid(userId);
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setRealname(realname);
+        user.setAuthority(Integer.valueOf(authority));
         return user;
     }
 
     /**
      * 校验用户信息(第三步)
      *
-     * @param user 用户信息
+     * @param user        用户信息
      * @param checkResult 校验结果
      */
     private void processValidation(User user, CheckResult checkResult) {
@@ -450,15 +438,18 @@ public class UserServiceImpl implements UserService {
                 if (list.size() <= 1) {
                     checkResult.setCheckCode(-1);
                     checkResult.setCheckMsg("用户名已存在");
+                    return;
                 }
             } else {
                 checkResult.setCheckCode(-1);
                 checkResult.setCheckMsg("传入的id有误");
+                return;
             }
         } catch (Exception e) {
             e.printStackTrace();
             checkResult.setCheckCode(-1);
             checkResult.setCheckMsg("用户名已存在");
+            return;
         }
     }
 }
