@@ -1,17 +1,21 @@
 package hsoft.mobile.projectrecord.service;
 
+import com.google.gson.Gson;
+import hsoft.mobile.projectrecord.controller.ProjectDao;
 import hsoft.mobile.projectrecord.dao.UserDao;
-import hsoft.mobile.projectrecord.model.CheckResult;
-import hsoft.mobile.projectrecord.model.ProjectInfo;
-import hsoft.mobile.projectrecord.model.User;
-import hsoft.mobile.projectrecord.model.Validation;
+import hsoft.mobile.projectrecord.mapper.DepartmentMapper;
+import hsoft.mobile.projectrecord.mapper.ProjectInfoMapper;
+import hsoft.mobile.projectrecord.mapper.StatusCategoryMapper;
+import hsoft.mobile.projectrecord.model.*;
 import hsoft.mobile.projectrecord.utils.Common;
 import hsoft.mobile.projectrecord.utils.FBase64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -24,36 +28,80 @@ public class ProjectServiceImpl implements ProjectService {
     private TokenService tokenService;
 
     @Autowired
+    private ProjectDao projectDao;
+    @Autowired
+    private ProjectInfoMapper projectInfoMapper;
+    @Autowired
     private UserDao userDao;
+    @Autowired
+    private DepartmentMapper departmentMapper;
+    @Autowired
+    private StatusCategoryMapper statusCategoryMapper;
 
     //本地测试时为true
     private boolean localtest = Common.localtest;
+    //Gson工具
+    private Gson gson = new Gson();
 
     @Override
     public String processCreate(Map<String, String> map) {
-        return null;
-    }
-
-
-    /**
-     * 校验用户是否登录以及权限校验(第一步)
-     *
-     * @param checkResult      校验结果信息
-     * @param isCheckAuthority 是否校验用户权限
-     */
-    private void checkUser(CheckResult checkResult, boolean isCheckAuthority) {
-        try {
-            User user = tokenService.processUser();
-            if (isCheckAuthority && user.getAuthority() != 1 && user.getAuthority() != 2) {
-                checkResult.setCheckCode(-1);
-                checkResult.setCheckMsg("对不起，您没有权限");
+        ResultCode<ProjectInfo> resultCode = new ResultCode<ProjectInfo>();
+        CheckResult checkResult = new CheckResult();
+        do{
+            //第一步 校验用户是否登录以及权限
+            tokenService.processCheckUser(checkResult, true);
+            if(checkResult.getCheckCode() < 0){
+                break;
             }
-            checkResult.setOperatorId(user.getUserid());
-        } catch (Exception e) { // 用户没有登录，返回信息
-            e.printStackTrace();
-            checkResult.setCheckCode(-400);
-            checkResult.setCheckMsg("用户没有登录");
+
+            //第二步 准备数据
+            ProjectInfo projectInfo = new ProjectInfo();
+            try {
+                projectInfo = processModel(map);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
+            //第三步 校验数据
+            processValidation(projectInfo, checkResult, true);
+            if(checkResult.getCheckCode() < 0){
+                break;
+            }
+
+            //第四步 插入操作之前校验数据库
+            processDB(projectInfo, checkResult, true);
+            if(checkResult.getCheckCode() < 0){
+                break;
+            }
+
+            //第五步 数据库插入操作
+            try {
+                Date date = new Date();
+                SimpleDateFormat simpleFormatter = new SimpleDateFormat("yyyyMMddHHmm");
+                String projectIndex = simpleFormatter.format(date);
+                projectInfo.setProjindex(projectIndex);
+                projectInfo.setCreateid(checkResult.getOperatorId());
+                projectInfo.setCreatetime(date);
+                projectInfo.setHide(0);
+                projectInfoMapper.insertSelective(projectInfo);
+                resultCode.setRs(1);
+                resultCode.setValue(projectInfo);
+                checkResult.setCheckCode(1);
+            } catch (Exception e) {
+                e.printStackTrace();
+                checkResult.setCheckCode(-1);
+                checkResult.setCheckMsg("数据库插入操作错误");
+            }
+
+        }while(false);
+        if (checkResult.getCheckCode() < 0) {
+            resultCode.setRs(checkResult.getCheckCode());
+            resultCode.setMsg(checkResult.getCheckMsg());
         }
+        if (localtest) {
+            return gson.toJson(resultCode);
+        }
+        return FBase64.encode(gson.toJson(resultCode).getBytes());
     }
 
     /**
@@ -137,6 +185,54 @@ public class ProjectServiceImpl implements ProjectService {
         if (!validations.isEmpty()) {
             checkResult.setCheckCode(-1);
             checkResult.setCheckMsg(validations.get(0).getField() + validations.get(0).getError());
+        }
+    }
+
+    private void processDB(ProjectInfo projectInfo, CheckResult checkResult, boolean isCreate){
+        List<ProjectInfo> list = new ArrayList<ProjectInfo>();
+
+        try {
+            if(isCreate){
+                list = projectDao.findByProjName(projectInfo.getProjname());
+                if(!list.isEmpty()){
+                    checkResult.setCheckCode(-1);
+                    checkResult.setCheckMsg("项目名称已存在");
+                    return;
+                }
+            }
+            if(projectDao.findByIndex(projectInfo.getProjindex()) != null){
+                list = projectDao.findByIndexOrProjName(projectInfo.getProjindex(), projectInfo.getProjname());
+                if(list.size() > 1){
+                    checkResult.setCheckCode(-1);
+                    checkResult.setCheckMsg("项目名称已存在");
+                    return;
+                }
+            }else{
+                checkResult.setCheckCode(-1);
+                checkResult.setCheckMsg("传入的项目编号有误");
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            checkResult.setCheckCode(-1);
+            checkResult.setCheckMsg("项目名称已存在");
+            return;
+        }
+
+        if(userDao.findById(projectInfo.getProjmanager()) == null){
+            checkResult.setCheckCode(-1);
+            checkResult.setCheckMsg("传入的项目负责人有误");
+            return;
+        }
+        if(statusCategoryMapper.selectByPrimaryKey(projectInfo.getStatuscategoryid()) == null){
+            checkResult.setCheckCode(-1);
+            checkResult.setCheckMsg("传入的项目状态有误");
+            return;
+        }
+        if(departmentMapper.selectByPrimaryKey(projectInfo.getDeptid()) == null){
+            checkResult.setCheckCode(-1);
+            checkResult.setCheckMsg("传入的项目来源有误");
+            return;
         }
     }
 }

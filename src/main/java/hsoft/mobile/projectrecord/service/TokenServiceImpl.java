@@ -1,6 +1,7 @@
 package hsoft.mobile.projectrecord.service;
 
 import com.google.gson.Gson;
+import hsoft.mobile.projectrecord.model.CheckResult;
 import hsoft.mobile.projectrecord.model.ResultCode;
 import hsoft.mobile.projectrecord.model.User;
 import hsoft.mobile.projectrecord.utils.Common;
@@ -116,6 +117,25 @@ public class TokenServiceImpl implements TokenService {
         }
         return null;
     }
+
+
+    @Override
+    public void processCheckUser(CheckResult checkResult, boolean isCheckAuthority) {
+        try {
+            User user = processUser();
+            if (isCheckAuthority && user.getAuthority() != 1 && user.getAuthority() != 2) {
+                checkResult.setCheckCode(-1);
+                checkResult.setCheckMsg("对不起，您没有权限");
+            }
+            checkResult.setCheckCode(1);
+            checkResult.setOperatorId(user.getUserid());
+        } catch (Exception e) { // 用户没有登录，返回信息
+            e.printStackTrace();
+            checkResult.setCheckCode(-400);
+            checkResult.setCheckMsg("用户没有登录");
+        }
+    }
+
 
     /**
      * 获取浏览器的cookie

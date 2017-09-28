@@ -44,7 +44,7 @@ public class PlatformServiceImpl implements PlatformService {
         CheckResult checkResult = new CheckResult();
         do {
             //第一步 校验用户是否登录以及权限
-            checkUser(checkResult, true);
+            tokenService.processCheckUser(checkResult, true);
             //如果未通过登录和权限校验，返回结果
             if (checkResult.getCheckCode() < 0) {
                 break;
@@ -100,7 +100,7 @@ public class PlatformServiceImpl implements PlatformService {
         CheckResult checkResult = new CheckResult();
         do {
             //第一步 校验用户是否登录以及权限
-            checkUser(checkResult, true);
+            tokenService.processCheckUser(checkResult, true);
             //如果未通过登录和权限校验，返回结果
             if (checkResult.getCheckCode() < 0) {
                 break;
@@ -161,7 +161,7 @@ public class PlatformServiceImpl implements PlatformService {
         CheckResult checkResult = new CheckResult();
         do {
             //第一步 校验用户是否登录以及权限
-            checkUser(checkResult, true);
+            tokenService.processCheckUser(checkResult, true);
             //如果未通过登录和权限校验，返回结果
             if (checkResult.getCheckCode() < 0) {
                 break;
@@ -208,7 +208,7 @@ public class PlatformServiceImpl implements PlatformService {
         CheckResult checkResult = new CheckResult();
         do{
             //第一步 校验用户是否登录以及权限
-            checkUser(checkResult, false);
+            tokenService.processCheckUser(checkResult, false);
             //如果未通过登录和权限校验，返回结果
             if (checkResult.getCheckCode() < 0) {
                 break;
@@ -239,28 +239,6 @@ public class PlatformServiceImpl implements PlatformService {
             return gson.toJson(resultCode);
         }
         return FBase64.encode(gson.toJson(resultCode).getBytes());
-    }
-
-    /**
-     * 校验用户是否登录以及权限校验(第一步)
-     *
-     * @param checkResult      校验结果信息
-     * @param isCheckAuthority 是否校验用户权限
-     */
-    private void checkUser(CheckResult checkResult, boolean isCheckAuthority) {
-        try {
-            User user = tokenService.processUser();
-            if (isCheckAuthority && user.getAuthority() != 1 && user.getAuthority() != 2) {
-                checkResult.setCheckCode(-1);
-                checkResult.setCheckMsg("对不起，您没有权限");
-            }
-            checkResult.setCheckCode(1);
-            checkResult.setOperatorId(user.getUserid());
-        } catch (Exception e) { // 用户没有登录，返回信息
-            e.printStackTrace();
-            checkResult.setCheckCode(-400);
-            checkResult.setCheckMsg("用户没有登录");
-        }
     }
 
     /**
@@ -321,6 +299,7 @@ public class PlatformServiceImpl implements PlatformService {
                 if (!list.isEmpty()) {
                     checkResult.setCheckCode(-1);
                     checkResult.setCheckMsg("平台名称已存在");
+                    return;
                 }
             }
             //如果通过id能搜索到数据，则说明id存在
