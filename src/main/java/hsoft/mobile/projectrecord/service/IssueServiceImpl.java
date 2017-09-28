@@ -17,12 +17,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 部门信息Service
+ * 问题信息Service
  * create by TX on 2017/9/26
  */
 
 @Service
-public class DepartmentServiceImpl implements DepartmentService {
+public class IssueServiceImpl implements IssueService {
 
     @Autowired
     private ValidationService validationService;

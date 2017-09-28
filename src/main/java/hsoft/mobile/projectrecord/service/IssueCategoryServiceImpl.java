@@ -2,8 +2,8 @@ package hsoft.mobile.projectrecord.service;
 
 import com.google.gson.Gson;
 import com.sun.istack.internal.Nullable;
-import hsoft.mobile.projectrecord.dao.DepartmentDao;
-import hsoft.mobile.projectrecord.mapper.DepartmentMapper;
+import hsoft.mobile.projectrecord.dao.IssueCategoryDao;
+import hsoft.mobile.projectrecord.mapper.IssueCategoryMapper;
 import hsoft.mobile.projectrecord.model.*;
 import hsoft.mobile.projectrecord.utils.Common;
 import hsoft.mobile.projectrecord.utils.FBase64;
@@ -17,28 +17,28 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 部门信息Service
- * create by TX on 2017/9/26
+ * 问题类型信息Service
+ * create by TX on 2017/9/27
  */
 
 @Service
-public class DepartmentServiceImpl implements DepartmentService {
+public class IssueCategoryServiceImpl implements IssueCategoryService {
 
     @Autowired
     private ValidationService validationService;
     @Autowired
     private TokenService tokenService;
     @Autowired
-    private DepartmentMapper departmentMapper;
+    private IssueCategoryMapper issueCategoryMapper;
     @Autowired
-    private DepartmentDao departmentDao;
+    private IssueCategoryDao issueCategoryDao;
 
     private boolean localtest = Common.localtest;
 
     @Override
     public String processCreate(Map<String, String> map) {
         Gson gson = new Gson();
-        ResultCode<Department> resultCode = new ResultCode<Department>();
+        ResultCode<IssueCategory> resultCode = new ResultCode<IssueCategory>();
         CheckResult checkResult = new CheckResult();
 
         do {
@@ -53,9 +53,9 @@ public class DepartmentServiceImpl implements DepartmentService {
             }
 
             // 2. extract data
-            Department department;
+            IssueCategory issueCategory;
             try {
-                department = parseData(map);
+                issueCategory = parseData(map);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
                 checkResult.setCheckCode(-1);
@@ -63,21 +63,21 @@ public class DepartmentServiceImpl implements DepartmentService {
                 break;
             }
 
-            // 3. check department name
-            checkResult = checkDataFormat(department);
+            // 3. check IssueCategory name
+            checkResult = checkDataFormat(issueCategory);
             if (checkResult.getCheckCode() < 0) break;
 
             // 4. check database
-            checkResult = checkDatabaseByName(department.getDeptname());
+            checkResult = checkDatabaseByName(issueCategory.getIssueName());
             if (checkResult.getCheckCode() < 0) break;
 
             // 5. insert data to database
-            department.setCreateid(user.getUserid());
-            department.setCreatetime(new Date());
-            departmentMapper.insertSelective(department);
+            issueCategory.setCreateid(user.getUserid());
+            issueCategory.setCreatetime(new Date());
+            issueCategoryMapper.insertSelective(issueCategory);
 
             resultCode.setRs(1);
-            resultCode.setValue(department);
+            resultCode.setValue(issueCategory);
         } while (false);
 
         if (checkResult.getCheckCode() < 0) {
@@ -93,7 +93,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public String processUpdate(Map<String, String> map) {
         Gson gson = new Gson();
-        ResultCode<Department> resultCode = new ResultCode<Department>();
+        ResultCode<IssueCategory> resultCode = new ResultCode<IssueCategory>();
         CheckResult checkResult = new CheckResult();
 
         do {
@@ -108,9 +108,9 @@ public class DepartmentServiceImpl implements DepartmentService {
             }
 
             // 2. extract data
-            Department department;
+            IssueCategory issueCategory;
             try {
-                department = parseData(map);
+                issueCategory = parseData(map);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
                 checkResult.setCheckCode(-1);
@@ -118,21 +118,21 @@ public class DepartmentServiceImpl implements DepartmentService {
                 break;
             }
 
-            // 3. check department name
-            checkResult = checkDataFormat(department);
+            // 3. check IssueCategory name
+            checkResult = checkDataFormat(issueCategory);
             if (checkResult.getCheckCode() < 0) break;
 
             // 4. check database
-            checkResult = checkDatabaseByIdAndName(department.getDeptid(), department.getDeptname());
+            checkResult = checkDatabaseByIdAndName(issueCategory.getIssueCategoryId(), issueCategory.getIssueName());
             if (checkResult.getCheckCode() < 0) break;
 
             // 5. update data to database
-            department.setUpdateid(user.getUserid());
-            department.setUpdatetime(new Date());
-            departmentMapper.updateByPrimaryKeySelective(department);
+            issueCategory.setUpdateid(user.getUserid());
+            issueCategory.setUpdatetime(new Date());
+            issueCategoryMapper.updateByPrimaryKeySelective(issueCategory);
 
             resultCode.setRs(1);
-            resultCode.setValue(department);
+            resultCode.setValue(issueCategory);
         } while (false);
 
         if (checkResult.getCheckCode() < 0) {
@@ -148,7 +148,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public String processDelete(Map<String, String> map) {
         Gson gson = new Gson();
-        ResultCode<Department> resultCode = new ResultCode<Department>();
+        ResultCode<IssueCategory> resultCode = new ResultCode<IssueCategory>();
         CheckResult checkResult = new CheckResult();
 
         do {
@@ -163,9 +163,9 @@ public class DepartmentServiceImpl implements DepartmentService {
             }
 
             // 2. extract data
-            Department department;
+            IssueCategory issueCategory;
             try {
-                department = parseData(map);
+                issueCategory = parseData(map);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
                 checkResult.setCheckCode(-1);
@@ -174,14 +174,14 @@ public class DepartmentServiceImpl implements DepartmentService {
             }
 
             // 3. check database
-            checkResult = checkDatabaseById(department.getDeptid());
+            checkResult = checkDatabaseById(issueCategory.getIssueCategoryId());
             if (checkResult.getCheckCode() < 0) break;
 
             // 5. delete data from database
-            departmentMapper.deleteByPrimaryKey(department.getDeptid());
+            issueCategoryMapper.deleteByPrimaryKey(issueCategory.getIssueCategoryId());
 
             resultCode.setRs(1);
-            resultCode.setValue(department);
+            resultCode.setValue(issueCategory);
         } while (false);
 
         if (checkResult.getCheckCode() < 0) {
@@ -197,14 +197,14 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public String processList() {
         Gson gson = new Gson();
-        ResultCode<List<Department>> resultCode = new ResultCode<List<Department>>();
+        ResultCode<List<IssueCategory>> resultCode = new ResultCode<List<IssueCategory>>();
 
         if (tokenService.processCheckToken()) {
-            List<Department> list = departmentDao.findList();
-            if(list.isEmpty()){
+            List<IssueCategory> list = issueCategoryDao.findList();
+            if (list.isEmpty()) {
                 resultCode.setRs(-10);
                 resultCode.setMsg("无数据");
-            }else{
+            } else {
                 resultCode.setRs(1);
                 resultCode.setValue(list);
             }
@@ -224,26 +224,26 @@ public class DepartmentServiceImpl implements DepartmentService {
      * @param map 前端传入的信息
      * @return 平台信息model
      */
-    private Department parseData(Map<String, String> map) throws UnsupportedEncodingException {
-        Department department = new Department();
-        String departmentId = map.get("departmentId");
-        String departmentName = map.get("departmentName");
-        if (departmentId != null && !"".equals(departmentId)) {
-            if(!localtest){
-                departmentId = new String(FBase64.decode(departmentId));
+    private IssueCategory parseData(Map<String, String> map) throws UnsupportedEncodingException {
+        IssueCategory issueCategory = new IssueCategory();
+        String issueCategoryId = map.get("issueCategoryId");
+        String issueCategoryName = map.get("issueCategoryName");
+        if (issueCategoryId != null && !"".equals(issueCategoryId)) {
+            if (!localtest) {
+                issueCategoryId = new String(FBase64.decode(issueCategoryId));
             }
-            department.setDeptid(Integer.valueOf(departmentId));
+            issueCategory.setIssueCategoryId(Integer.valueOf(issueCategoryId));
         }
-        if (departmentName != null && !"".equals(departmentName)) {
-            if(!localtest){
-                departmentName = new String(FBase64.decode(departmentName));
+        if (issueCategoryName != null && !"".equals(issueCategoryName)) {
+            if (!localtest) {
+                issueCategoryName = new String(FBase64.decode(issueCategoryName));
             }
-            department.setDeptname(departmentName);
+            issueCategory.setissueCategoryName(issueCategoryName);
         }
-        return department;
+        return issueCategory;
     }
 
-    private User getUser(CheckResult checkResult){
+    private User getUser(CheckResult checkResult) {
         User user = new User();
         try {
             user = tokenService.processUser();
@@ -259,20 +259,19 @@ public class DepartmentServiceImpl implements DepartmentService {
     /**
      * 登录校验，权限校验，传入信息校验（判空，判断长度）
      *
-     * @param department         出入信息
+     * @param issueCategory 出入信息
      * @return 校验结果 checkCode字段 < 0 则校验不通过
      */
-    private CheckResult checkDataFormat(@Nullable Department department) {
+    private CheckResult checkDataFormat(@Nullable IssueCategory issueCategory) {
         CheckResult checkResult = new CheckResult();
-        List<Validation> validations = new ArrayList<Validation>();
-        String departmentName = department.getDeptname();
-        validationService.verifyString("部门名称", departmentName, "validation",
-                "2", "10", false, validations);
-        if (!validations.isEmpty()) { // 如果没通过校验
+        List<Validation> validations = new ArrayList<>();
+        String issueCategoryName = issueCategory.getIssueName();
+        validationService.verifyString("问题类型名称", issueCategoryName, "validation", "2", "10", false, validations);
+        if (!validations.isEmpty()) { // 没通过校验
             Validation validation = validations.get(0);
             checkResult.setCheckCode(-1);
             checkResult.setCheckMsg(validation.getField() + validation.getError());
-        } else { // 若通过全部校验,则将操作人员的id置入checkresult并返回
+        } else { // 通过全部校验
             checkResult.setCheckCode(1);
         }
         return checkResult;
@@ -281,42 +280,43 @@ public class DepartmentServiceImpl implements DepartmentService {
     /**
      * 校验是否可以进行插入或修改操作
      *
-     * @param departmentName 部门名称
+     * @param issueCategoryName 问题类型名称
      * @return true可以/false不可以
      */
-    private CheckResult checkDatabaseByName(String departmentName) {
+    private CheckResult checkDatabaseByName(String issueCategoryName) {
         CheckResult checkResult = new CheckResult();
-        List<Department> list = departmentDao.findByName(departmentName);
+        List<IssueCategory> list = issueCategoryDao.findByName(issueCategoryName);
         if (!list.isEmpty()) {
             checkResult.setCheckCode(-1);
-            checkResult.setCheckMsg("该部门名称已存在");
-        } else {
-            checkResult.setCheckCode(1);
-        }
-        return checkResult;
-    }
-    private CheckResult checkDatabaseById(int departmentId) {
-        CheckResult checkResult = new CheckResult();
-        if (departmentDao.findById(departmentId) == null) {
-            checkResult.setCheckCode(-1);
-            checkResult.setCheckMsg("该部门ID不存在");
-        } else {
-            checkResult.setCheckCode(1);
-        }
-        return checkResult;
-    }
-    private CheckResult checkDatabaseByIdAndName(int departmentId, String departmentName) {
-        CheckResult checkResult = new CheckResult();
-        if (departmentDao.findById(departmentId) == null) {
-            checkResult.setCheckCode(-1);
-            checkResult.setCheckMsg("该部门ID不存在");
-        } else if (departmentDao.findByIdOrName(departmentId, departmentName).size() > 1){
-            checkResult.setCheckCode(-1);
-            checkResult.setCheckMsg("该部门名称已存在");
+            checkResult.setCheckMsg("该问题类型名称已存在");
         } else {
             checkResult.setCheckCode(1);
         }
         return checkResult;
     }
 
+    private CheckResult checkDatabaseById(int issueCategoryId) {
+        CheckResult checkResult = new CheckResult();
+        if (issueCategoryDao.findById(issueCategoryId) == null) {
+            checkResult.setCheckCode(-1);
+            checkResult.setCheckMsg("该问题类型ID不存在");
+        } else {
+            checkResult.setCheckCode(1);
+        }
+        return checkResult;
+    }
+
+    private CheckResult checkDatabaseByIdAndName(int issueCategoryId, String issueCategoryName) {
+        CheckResult checkResult = new CheckResult();
+        if (issueCategoryDao.findById(issueCategoryId) == null) {
+            checkResult.setCheckCode(-1);
+            checkResult.setCheckMsg("该问题类型ID不存在");
+        } else if (issueCategoryDao.findByIdOrName(issueCategoryId, issueCategoryName).size() > 1) {
+            checkResult.setCheckCode(-1);
+            checkResult.setCheckMsg("该问题类型名称已存在");
+        } else {
+            checkResult.setCheckCode(1);
+        }
+        return checkResult;
+    }
 }

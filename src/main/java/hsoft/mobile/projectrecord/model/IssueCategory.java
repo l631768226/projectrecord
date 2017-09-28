@@ -3,9 +3,9 @@ package hsoft.mobile.projectrecord.model;
 import java.util.Date;
 
 public class IssueCategory {
-    private Integer issuecategoryid;
+    private Integer issueCategoryId;
 
-    private String issuename;
+    private String issueCategoryName;
 
     private Integer createid;
 
@@ -15,20 +15,20 @@ public class IssueCategory {
 
     private Date updatetime;
 
-    public Integer getIssuecategoryid() {
-        return issuecategoryid;
+    public Integer getIssueCategoryId() {
+        return issueCategoryId;
     }
 
-    public void setIssuecategoryid(Integer issuecategoryid) {
-        this.issuecategoryid = issuecategoryid;
+    public void setIssueCategoryId(Integer issueCategoryId) {
+        this.issueCategoryId = issueCategoryId;
     }
 
-    public String getIssuename() {
-        return issuename;
+    public String getIssueName() {
+        return issueCategoryName;
     }
 
-    public void setIssuename(String issuename) {
-        this.issuename = issuename == null ? null : issuename.trim();
+    public void setissueCategoryName(String issueCategoryName) {
+        this.issueCategoryName = issueCategoryName == null ? null : issueCategoryName.trim();
     }
 
     public Integer getCreateid() {
