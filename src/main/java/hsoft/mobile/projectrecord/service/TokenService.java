@@ -1,5 +1,6 @@
 package hsoft.mobile.projectrecord.service;
 
+import hsoft.mobile.projectrecord.model.CheckResult;
 import hsoft.mobile.projectrecord.model.User;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +13,7 @@ public interface TokenService {
      * 获取cookie信息对比redis中存储的token信息
      * @return true成功/false失败
      */
-    public boolean processCheckToken();
+    boolean processCheckToken();
 
     /**
      * 登录时调用，创建并存储token
@@ -21,17 +22,24 @@ public interface TokenService {
      * @param response http返回
      * @return 结果字段
      */
-    public String processLogin(Map<String, String> map, HttpServletRequest request, HttpServletResponse response);
+    String processLogin(Map<String, String> map, HttpServletRequest request, HttpServletResponse response);
 
     /**
      * 退出系统，删除token
      * @param response http返回
      */
-    public void processExit(HttpServletResponse response);
+    void processExit(HttpServletResponse response);
 
     /**
      * 根据http请求中的cookie获取redis中存储的token的具体数据（User）
      * @return 用户信息model
      */
-    public User processUser();
+    User processUser();
+
+    /**
+     * 校验用户是否登录以及权限校验(第一步)
+     * @param checkResult      校验结果信息
+     * @param isCheckAuthority 是否校验用户权限
+     */
+    void processCheckUser(CheckResult checkResult, boolean isCheckAuthority);
 }

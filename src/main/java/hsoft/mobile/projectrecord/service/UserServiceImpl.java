@@ -113,8 +113,8 @@ public class UserServiceImpl implements UserService {
                 checkResult.setCheckCode(1);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
-                resultCode.setRs(-1);
-                resultCode.setMsg("数据库插入操作错误");
+                checkResult.setCheckCode(-1);
+                checkResult.setCheckMsg("数据库插入操作错误");
             }
 
         } while (false);
@@ -431,11 +431,12 @@ public class UserServiceImpl implements UserService {
                 if (!list.isEmpty()) {
                     checkResult.setCheckCode(-1);
                     checkResult.setCheckMsg("用户名已存在");
+                    return;
                 }
             }
-            if (userMapper.selectByPrimaryKey(user.getUserid()) == null) {
+            if (userDao.findById(user.getUserid()) != null) {
                 list = userDao.findByIdOrUsername(user.getUserid(), user.getUsername());
-                if (list.size() <= 1) {
+                if (list.size() > 1) {
                     checkResult.setCheckCode(-1);
                     checkResult.setCheckMsg("用户名已存在");
                     return;
