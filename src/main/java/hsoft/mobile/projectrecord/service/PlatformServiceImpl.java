@@ -298,7 +298,7 @@ public class PlatformServiceImpl implements PlatformService {
         List<Validation> validations = new ArrayList<Validation>();
         String platformName = platform.getPlatformname();
         validationService.verifyString("平台名称", platformName, "validation",
-                "2", "10", true, validations);
+                "2", "10", false, validations);
         if (!validations.isEmpty()) {
             checkResult.setCheckCode(-1);
             checkResult.setCheckMsg(validations.get(0).getField() + validations.get(0).getError());

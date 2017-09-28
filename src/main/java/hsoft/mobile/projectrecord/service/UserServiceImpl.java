@@ -414,13 +414,13 @@ public class UserServiceImpl implements UserService {
     private void processValidation(User user, CheckResult checkResult) {
         List<Validation> validations = new ArrayList<Validation>();
         validationService.verifyString("用户名", user.getUsername(), "validation",
-                "4", "20", true, validations);
+                "4", "20", false, validations);
         validationService.verifyString("密码", user.getPassword(), "validation",
-                "6", "20", true, validations);
+                "6", "20", false, validations);
         validationService.verifyString("真实姓名", user.getRealname(), "chinese",
-                "2", "3", true, validations);
+                "2", "3", false, validations);
         validationService.verifyInt("权限", user.getAuthority(), "number",
-                1, 3, true, validations);
+                1, 3, false, validations);
         if (!validations.isEmpty()) {
             checkResult.setCheckCode(-1);
             checkResult.setCheckMsg(validations.get(0).getField() + validations.get(0).getError());
