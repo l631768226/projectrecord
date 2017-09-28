@@ -292,7 +292,7 @@ public class PlatformServiceImpl implements PlatformService {
      * 校验平台信息(第三步)
      *
      * @param platform 平台信息model
-     * @return 校验结果的list 如果非空则校验不通过
+     * @param checkResult 校验结果
      */
     private void processValidation(Platform platform, CheckResult checkResult) {
         List<Validation> validations = new ArrayList<Validation>();

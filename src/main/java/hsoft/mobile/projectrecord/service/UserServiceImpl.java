@@ -409,7 +409,7 @@ public class UserServiceImpl implements UserService {
      * 校验用户信息(第三步)
      *
      * @param user 用户信息
-     * @return 校验结果的list 如果非空则校验不通过
+     * @param checkResult 校验结果
      */
     private void processValidation(User user, CheckResult checkResult) {
         List<Validation> validations = new ArrayList<Validation>();
