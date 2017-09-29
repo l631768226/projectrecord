@@ -1,7 +1,7 @@
 package hsoft.mobile.projectrecord.service;
 
 import com.google.gson.Gson;
-import hsoft.mobile.projectrecord.controller.ProjectDao;
+import hsoft.mobile.projectrecord.dao.ProjectDao;
 import hsoft.mobile.projectrecord.dao.UserDao;
 import hsoft.mobile.projectrecord.mapper.DepartmentMapper;
 import hsoft.mobile.projectrecord.mapper.ProjectInfoMapper;
