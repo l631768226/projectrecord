@@ -203,10 +203,29 @@ public class ValidationServiceImpl implements ValidationService{
 	}
 
 	@Override
-	public void verifyFloat(String field, Object value, float min, float max, int size, boolean nullable, List<Validation> validations) {
+	public void verifyFloat(String field, Object value, float min, float max, int size,
+							boolean nullable, List<Validation> validations) {
 		if(value == null || "".equals(value.toString().trim())){
 			if(!nullable){
 				validations.add(new Validation(field,"必须填写"));
+			}
+		}else{
+			if(size < 0){
+				validations.add(new Validation(field, "校验函数使用错误，请检查代码"));
+			}else{
+				String st_data = value.toString();
+				String st_regEx = "^(-?\\d+)(\\.\\d{0,"+ size +"})?$";
+				Pattern p =Pattern.compile(st_regEx);
+				Matcher m = p.matcher(st_data);
+				if(!m.matches()){
+					validations.add(new Validation(field, "只能输入至多" + size + "位的浮点数"));
+				}else{
+					value = Float.parseFloat(st_data);
+					if((float)value < min || (float)value > max){
+						validations.add(new Validation(field,
+								"只能输入介于" + min + "到" + max + "之间的浮点数"));
+					}
+				}
 			}
 		}
 	}
