@@ -104,6 +104,11 @@ public class ProjectServiceImpl implements ProjectService {
         return FBase64.encode(gson.toJson(resultCode).getBytes());
     }
 
+    @Override
+    public String processUpdate(Map<String, String> map) {
+        return null;
+    }
+
     /**
      * 将前端传入的数据置入model中(第二步)
      * @param map 前端传入的信息

@@ -10,4 +10,11 @@ public interface ProjectService {
      * @return 结果json
      */
     String processCreate(Map<String, String> map);
+
+    /**
+     * 修改项目信息
+     * @param map 传入的项目信息
+     * @return 结果json
+     */
+    String processUpdate(Map<String, String> map);
 }

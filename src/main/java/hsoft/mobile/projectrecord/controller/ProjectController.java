@@ -23,4 +23,10 @@ public class ProjectController {
     public String processCreate(@RequestBody Map<String, String> map){
         return projectService.processCreate(map);
     }
+
+    @RequestMapping("/update")
+    @ResponseBody
+    public String processUpdate(@RequestBody Map<String, String> map){
+        return projectService.processUpdate(map);
+    }
 }
