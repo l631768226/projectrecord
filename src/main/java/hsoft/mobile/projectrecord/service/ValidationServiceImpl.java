@@ -180,7 +180,7 @@ public class ValidationServiceImpl implements ValidationService{
 	}
 
 	@Override
-	public void verifyInt(String field, Object value, String type, int min, int max, boolean nullable,
+	public void verifyInt(String field, Object value, int min, int max, boolean nullable,
 			List<Validation> validations) {
 		if(value == null || "".equals(value.toString().trim())){
 			if(!nullable){
@@ -198,6 +198,15 @@ public class ValidationServiceImpl implements ValidationService{
 				if((int)value < min || (int)value > max){
 					validations.add(new Validation(field, "只能输入介于"+min+"到"+max+"之间的整数"));
 				}
+			}
+		}
+	}
+
+	@Override
+	public void verifyFloat(String field, Object value, float min, float max, int size, boolean nullable, List<Validation> validations) {
+		if(value == null || "".equals(value.toString().trim())){
+			if(!nullable){
+				validations.add(new Validation(field,"必须填写"));
 			}
 		}
 	}

@@ -407,7 +407,7 @@ public class UserServiceImpl implements UserService {
                 "6", "20", false, validations);
         validationService.verifyString("真实姓名", user.getRealname(), "chinese",
                 "2", "3", false, validations);
-        validationService.verifyInt("权限", user.getAuthority(), "number",
+        validationService.verifyInt("权限", user.getAuthority(),
                 1, 3, false, validations);
         if (!validations.isEmpty()) {
             checkResult.setCheckCode(-1);

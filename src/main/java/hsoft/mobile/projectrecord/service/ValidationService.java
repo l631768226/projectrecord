@@ -62,12 +62,24 @@ public interface ValidationService {
 	 * 校验int类型
 	 * @param field 字段名
 	 * @param value 字段值
-	 * @param type 类型
 	 * @param min 最小值
 	 * @param max 最大值
 	 * @param nullable 可以为空的标志
 	 * @param validations 使用的校验结果
 	 */
-	void verifyInt(String field, Object value, String type, int min, int max,
+	void verifyInt(String field, Object value, int min, int max,
                    boolean nullable, List<Validation> validations);
+
+	/**
+	 * 校验float类型
+	 * @param field 字段名称
+	 * @param value 字段值
+	 * @param min 最小值
+	 * @param max 最大值
+	 * @param size 小数点位数
+	 * @param nullable 是否可空
+	 * @param validations 使用的校验结果
+	 */
+	void verifyFloat(String field, Object value, float min, float max, int size,
+					 boolean nullable, List<Validation> validations);
 }
